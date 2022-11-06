@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -15,6 +14,6 @@ public class UserResponse {
   private LocalDateTime createdDate;
   private LocalDateTime lastModified;
   private String username;
-  private List<String> authorities;
+  private String authority;
 
 }

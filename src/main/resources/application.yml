@@ -7,7 +7,7 @@ spring:
   jpa:
     database: POSTGRESQL
     hibernate:
-      ddl-auto: update
+      ddl-auto: update #create-drop #update
     show-sql: false
     properties:
       hibernate:

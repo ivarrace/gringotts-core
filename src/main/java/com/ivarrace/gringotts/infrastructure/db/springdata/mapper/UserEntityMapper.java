@@ -22,7 +22,8 @@ public class UserEntityMapper {
         domain.setLastModified(entity.getLastModified());
         domain.setUsername(entity.getUsername());
         domain.setPassword(entity.getPassword());
-        domain.setAuthority(UserAuthority.valueOf(entity.getAuthority()));
+        domain.setAuthority(entity.getAuthority() != null ?
+                UserAuthority.valueOf(entity.getAuthority()) : null);
         domain.setEnabled(entity.isEnabled());
         domain.setNonExpired(entity.isNonExpired());
         domain.setNonLocked(entity.isNonLocked());
@@ -48,7 +49,8 @@ public class UserEntityMapper {
         entity.setLastModified(domain.getLastModified());
         entity.setUsername(domain.getUsername());
         entity.setPassword(domain.getPassword());
-        entity.setAuthority(domain.getAuthority().name());
+        entity.setAuthority(domain.getAuthority() != null ?
+                domain.getAuthority().name() : null);
         entity.setEnabled(domain.isEnabled());
         entity.setNonExpired(domain.isNonExpired());
         entity.setNonLocked(domain.isNonLocked());

@@ -26,6 +26,7 @@ public class CategoryMapper {
         response.setId(category.getId());
         response.setName(category.getName());
         response.setCreatedDate(category.getCreatedDate());
+        response.setLastModified(category.getLastModified());
         response.setKey(category.getKey());
         return response;
     }

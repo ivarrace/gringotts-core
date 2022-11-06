@@ -21,6 +21,7 @@ public class UserMapper {
         userResponse.setCreatedDate(user.getCreatedDate());
         userResponse.setLastModified(user.getLastModified());
         userResponse.setUsername(user.getUsername());
+        userResponse.setAuthority(user.getAuthority().name());
         return userResponse;
     }
 

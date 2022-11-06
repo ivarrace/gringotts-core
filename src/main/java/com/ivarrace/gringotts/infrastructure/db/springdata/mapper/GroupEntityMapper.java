@@ -24,6 +24,7 @@ public class GroupEntityMapper {
         domain.setId(entity.getId().toString());
         domain.setName(entity.getName());
         domain.setCreatedDate(entity.getCreatedDate());
+        domain.setLastModified(entity.getLastModified());
         domain.setCategories(CategoryEntityMapper.toDomainList(entity.getCategories()));
         domain.setType(GroupType.valueOf(entity.getType()));
         domain.setKey(entity.getKey());
@@ -48,6 +49,7 @@ public class GroupEntityMapper {
         GroupEntity entity = new GroupEntity();
         entity.setId(domain.getId() != null ? UUID.fromString(domain.getId()) : null);
         entity.setCreatedDate(domain.getCreatedDate());
+        entity.setLastModified(domain.getLastModified());
         entity.setName(domain.getName());
         entity.setType(domain.getType().name());
         entity.setAccountancy(AccountancyEntityMapper.toDbo(domain.getAccountancy()));

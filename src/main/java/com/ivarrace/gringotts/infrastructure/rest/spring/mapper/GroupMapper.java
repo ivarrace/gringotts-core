@@ -26,6 +26,7 @@ public class GroupMapper {
         response.setKey(group.getKey());
         response.setName(group.getName());
         response.setCreatedDate(group.getCreatedDate());
+        response.setLastModified(group.getLastModified());
         response.setCategories(CategoryMapper.toResponse(group.getCategories()));
         return response;
     }

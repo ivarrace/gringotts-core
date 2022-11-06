@@ -13,6 +13,7 @@ public class Group {
     private String id;
     private String key;
     private LocalDateTime createdDate;
+    private LocalDateTime lastModified;
     private String name;
     private List<Category> categories;
     private GroupType type;

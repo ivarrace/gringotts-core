@@ -12,8 +12,9 @@ public class GroupResponse {
 
     private String id;
     private String key;
-    private LocalDateTime createdDate;
     private String name;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModified;
     private List<CategoryResponse> categories;
 
 }

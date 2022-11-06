@@ -25,6 +25,7 @@ public class CategoryEntityMapper {
         domain.setId(entity.getId().toString());
         domain.setName(entity.getName());
         domain.setCreatedDate(entity.getCreatedDate());
+        domain.setLastModified(entity.getLastModified());
         domain.setKey(entity.getKey());
         Group group = new Group();
         group.setId(entity.getGroup().getId().toString());
@@ -52,6 +53,7 @@ public class CategoryEntityMapper {
         CategoryEntity entity = new CategoryEntity();
         entity.setId(domain.getId() != null ? UUID.fromString(domain.getId()) : null);
         entity.setCreatedDate(domain.getCreatedDate());
+        entity.setLastModified(domain.getLastModified());
         entity.setName(domain.getName());
         entity.setKey(domain.getKey());
         entity.setGroup(GroupEntityMapper.toDbo(domain.getGroup()));
