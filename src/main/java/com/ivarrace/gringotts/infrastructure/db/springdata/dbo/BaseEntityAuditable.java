@@ -18,11 +18,11 @@ import java.time.LocalDateTime;
 public abstract class BaseEntityAuditable extends BaseEntity {
 
     @CreatedDate
-    @Column(name = "created_date", updatable = false)
+    @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
     @LastModifiedDate
-    @Column(name = "last_modified_date")
+    @Column(name = "last_modified_date", nullable = false)
     private LocalDateTime lastModified;
 
 }
