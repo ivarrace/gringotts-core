@@ -21,8 +21,6 @@ import java.util.List;
 @RequestMapping("/accountancy/{accountancyKey}/incomes")
 public class IncomesController {
 
-    private static final GroupType GROUP_TYPE = GroupType.INCOMES;
-
     private final GroupService groupService;
     private final CategoryService categoryService;
     private final MovementService movementService;
@@ -30,7 +28,7 @@ public class IncomesController {
     @GetMapping("/")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<List<GroupResponse>> getAllIncomesByAccountancyKey(@PathVariable String accountancyKey) {
-        List<GroupResponse> response = GroupMapper.toResponse(groupService.findByAccountancyKeyAndType(accountancyKey, GROUP_TYPE));
+        List<GroupResponse> response = GroupMapper.toResponse(groupService.findByAccountancyKeyAndType(accountancyKey, GroupType.INCOMES));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -38,7 +36,7 @@ public class IncomesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
     public ResponseEntity<GroupResponse> save(@PathVariable String accountancyKey, @RequestBody NewGroupCommand command) {
         GroupResponse response =
-                GroupMapper.toResponse(groupService.create(GroupMapper.toDomain(command, GROUP_TYPE, accountancyKey)));
+                GroupMapper.toResponse(groupService.create(GroupMapper.toDomain(command, GroupType.INCOMES, accountancyKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -46,7 +44,7 @@ public class IncomesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<GroupResponse> getById(@PathVariable String accountancyKey, @PathVariable String groupKey) {
         GroupResponse response =
-                GroupMapper.toResponse(groupService.findByKey(groupKey, accountancyKey, GROUP_TYPE));
+                GroupMapper.toResponse(groupService.findByKey(groupKey, accountancyKey, GroupType.INCOMES));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -57,14 +55,14 @@ public class IncomesController {
         GroupResponse response =
                 GroupMapper.toResponse(
                         groupService.modify(groupKey,
-                                GroupMapper.toDomain(command, GROUP_TYPE, accountancyKey)));
+                                GroupMapper.toDomain(command, GroupType.INCOMES, accountancyKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{groupKey}")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).OWNER)")
     public ResponseEntity<GroupResponse> delete(@PathVariable String accountancyKey, @PathVariable String groupKey) {
-        groupService.delete(accountancyKey, groupKey, GROUP_TYPE);
+        groupService.delete(accountancyKey, groupKey, GroupType.INCOMES);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -82,7 +80,7 @@ public class IncomesController {
                                                          @PathVariable String groupKey,
                                                          @RequestBody NewCategoryCommand command) {
         CategoryResponse response =
-                CategoryMapper.toResponse(categoryService.create(CategoryMapper.toDomain(command, GROUP_TYPE, accountancyKey, groupKey)));
+                CategoryMapper.toResponse(categoryService.create(CategoryMapper.toDomain(command, GroupType.INCOMES, accountancyKey, groupKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -102,7 +100,7 @@ public class IncomesController {
                                                            @RequestBody NewCategoryCommand command) {
         CategoryResponse response =
                 CategoryMapper.toResponse(
-                        categoryService.modify(categoryKey, CategoryMapper.toDomain(command, GROUP_TYPE, accountancyKey, groupKey)));
+                        categoryService.modify(categoryKey, CategoryMapper.toDomain(command, GroupType.INCOMES, accountancyKey, groupKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -131,7 +129,7 @@ public class IncomesController {
                                                  @PathVariable String categoryKey,
                                                  @RequestBody NewMovementCommand command) {
         MovementResponse response =
-                MovementMapper.toResponse(movementService.create(MovementMapper.toDomain(accountancyKey, GROUP_TYPE, groupKey, categoryKey, command)));
+                MovementMapper.toResponse(movementService.create(MovementMapper.toDomain(accountancyKey, GroupType.INCOMES, groupKey, categoryKey, command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -152,7 +150,7 @@ public class IncomesController {
                                                            @PathVariable String categoryKey,
                                                            @PathVariable String movementId,
                                                            @RequestBody NewMovementCommand command) {
-        MovementResponse response = MovementMapper.toResponse(movementService.modify(movementId, MovementMapper.toDomain(accountancyKey, GROUP_TYPE, groupKey, categoryKey, command)));
+        MovementResponse response = MovementMapper.toResponse(movementService.modify(movementId, MovementMapper.toDomain(accountancyKey, GroupType.INCOMES, groupKey, categoryKey, command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
