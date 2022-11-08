@@ -217,10 +217,10 @@ class AccountancyUserRoleCheckerTest {
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        String accountancyKey = accountancy.getKey();
         ObjectNotFoundException thrown =
                 assertThrows(ObjectNotFoundException.class, () -> {
-                    accountancyUserRoleChecker.hasPermission(accountancy.getKey()
-                            , AccountancyUserRoleType.OWNER);
+                    accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.OWNER);
                 });
         assertTrue(thrown.getMessage().contains(accountancy.getKey()));
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());

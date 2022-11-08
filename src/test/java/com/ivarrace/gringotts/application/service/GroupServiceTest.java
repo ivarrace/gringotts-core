@@ -6,6 +6,7 @@ import com.ivarrace.gringotts.application.exception.ObjectNotFoundException;
 import com.ivarrace.gringotts.application.repository.GroupRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.Group;
+import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -73,9 +74,13 @@ class GroupServiceTest {
         Group group = TestUtils.fakerGroup();
         when(groupRepositoryMock.findByKeyAndTypeInAccountancy(group.getKey(),
                 group.getType(), group.getAccountancy().getKey())).thenReturn(Optional.empty());
+
+        String groupKey = group.getKey();
+        String accountancyKey = group.getAccountancy().getKey();
+        GroupType groupType = group.getType();
         ObjectNotFoundException thrown =
                 assertThrows(ObjectNotFoundException.class, () -> {
-                    groupService.findByKey(group.getKey(), group.getAccountancy().getKey(), group.getType());
+                    groupService.findByKey(groupKey, accountancyKey, groupType);
                 });
         assertTrue(thrown.getMessage().contains(group.getKey()));
         verify(groupRepositoryMock, times(1)).findByKeyAndTypeInAccountancy(group.getKey(), group.getType(), group.getAccountancy().getKey());
@@ -164,9 +169,10 @@ class GroupServiceTest {
         modified.setAccountancy(existing.getAccountancy());
         when(groupRepositoryMock.findByKeyAndTypeInAccountancy(existing.getKey(),
                 modified.getType(), modified.getAccountancy().getKey())).thenReturn(Optional.empty());
+        String existingGroupKey = existing.getKey();
         ObjectNotFoundException thrown =
                 assertThrows(ObjectNotFoundException.class, () -> {
-                    groupService.modify(existing.getKey(), modified);
+                    groupService.modify(existingGroupKey, modified);
                 });
         assertTrue(thrown.getMessage().contains(existing.getKey()));
         verify(groupRepositoryMock, times(1)).findByKeyAndTypeInAccountancy(existing.getKey(),
@@ -191,9 +197,12 @@ class GroupServiceTest {
         Group group = TestUtils.fakerGroup();
         when(groupRepositoryMock.findByKeyAndTypeInAccountancy(group.getKey(),
                 group.getType(), group.getAccountancy().getKey())).thenReturn(Optional.empty());
+        String groupKey = group.getKey();
+        String accountancyKey = group.getAccountancy().getKey();
+        GroupType groupType = group.getType();
         ObjectNotFoundException thrown =
                 assertThrows(ObjectNotFoundException.class, () -> {
-                    groupService.delete(group.getAccountancy().getKey(), group.getKey(), group.getType());
+                    groupService.delete(accountancyKey, groupKey, groupType);
                 });
         assertTrue(thrown.getMessage().contains(group.getKey()));
         verify(groupRepositoryMock, times(1)).findByKeyAndTypeInAccountancy(group.getKey(),
