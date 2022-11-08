@@ -1,6 +1,8 @@
 package com.ivarrace.gringotts;
 
 import com.github.javafaker.Faker;
+import com.ivarrace.gringotts.domain.accountancy.Accountancy;
+import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.user.UserAuthority;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.*;
@@ -28,6 +30,18 @@ public class TestUtils {
         entity.setLastModified(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setGroups(Collections.emptyList()); //TODO
         entity.setUsers(Collections.emptyList()); //TODO
+        return entity;
+    }
+
+    public static Accountancy fakerAccountancy() {
+        Accountancy entity = new Accountancy();
+        entity.setId(UUID.randomUUID().toString());
+        entity.setName(faker.name().name());
+        entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
+        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(42, 10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setLastModified(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setIncomes(Collections.emptyList()); //TODO
+        entity.setExpenses(Collections.emptyList()); //TODO
         entity.setUsers(Collections.emptyList()); //TODO
         return entity;
     }
@@ -40,6 +54,18 @@ public class TestUtils {
         entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setType(optionFromEnum(GroupType.class).name());
         entity.setAccountancy(fakerAccountancyEntity());
+        entity.setCategories(Collections.emptyList()); //TODO
+        return entity;
+    }
+
+    public static Group fakerGroup() {
+        Group entity = new Group();
+        entity.setId(UUID.randomUUID().toString());
+        entity.setName(faker.name().name());
+        entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
+        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setType(optionFromEnum(GroupType.class));
+        entity.setAccountancy(fakerAccountancy());
         entity.setCategories(Collections.emptyList()); //TODO
         return entity;
     }

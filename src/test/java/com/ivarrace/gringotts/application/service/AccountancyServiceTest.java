@@ -1,5 +1,6 @@
 package com.ivarrace.gringotts.application.service;
 
+import com.ivarrace.gringotts.TestUtils;
 import com.ivarrace.gringotts.application.exception.ObjectAlreadyRegisteredException;
 import com.ivarrace.gringotts.application.exception.ObjectNotFoundException;
 import com.ivarrace.gringotts.application.ports.AuthPort;
@@ -47,16 +48,10 @@ class AccountancyServiceTest {
 
     @Test
     void findByKey() {
-        String accountancyKey = "test";
-        Accountancy accountancy = new Accountancy();
-        accountancy.setId("test");
-        accountancy.setExpenses(Collections.emptyList());
-        accountancy.setIncomes(Collections.emptyList());
-        accountancy.setUsers(Collections.emptyList());
-        accountancy.setKey(accountancyKey);
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey,
+        Accountancy accountancy = TestUtils.fakerAccountancy();
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(),
                 MOCK_USER)).thenReturn(Optional.of(accountancy));
-        Accountancy result = accountancyService.findByKey(accountancyKey);
+        Accountancy result = accountancyService.findByKey(accountancy.getKey());
         assertNotNull(result);
         assertAll("Expected values",
                 () -> assertEquals(accountancy.getId(), result.getId()),
@@ -74,7 +69,7 @@ class AccountancyServiceTest {
                         result.getExpenses().size()),
                 () -> assertTrue(result.getUsers().isEmpty())
         );
-        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancyKey, MOCK_USER);
+        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancy.getKey(), MOCK_USER);
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
     }
 
@@ -94,10 +89,8 @@ class AccountancyServiceTest {
 
     @Test
     void create() {
-        String accountancyKey = "test";
-        Accountancy accountancy = new Accountancy();
-        accountancy.setKey(accountancyKey);
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey,
+        Accountancy accountancy = TestUtils.fakerAccountancy();
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(),
                 MOCK_USER)).thenReturn(Optional.empty());
         when(accountancyRepositoryPortMock.save(accountancy)).thenReturn(accountancy);
         Accountancy result = accountancyService.create(accountancy);
@@ -107,55 +100,36 @@ class AccountancyServiceTest {
                 () -> assertEquals(AccountancyUserRoleType.OWNER , result.getUsers().get(0).getRole()),
                 () -> assertEquals(MOCK_USER, result.getUsers().get(0).getUser())
         );
-        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancyKey, MOCK_USER);
+        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancy.getKey(), MOCK_USER);
         verify(accountancyRepositoryPortMock, times(1)).save(accountancy);
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
     }
 
     @Test
     void create_alreadyExists() {
-        String accountancyKey = "test";
-        Accountancy accountancy = new Accountancy();
-        accountancy.setKey(accountancyKey);
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey,
+        Accountancy accountancy = TestUtils.fakerAccountancy();
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(),
                 MOCK_USER)).thenReturn(Optional.of(accountancy));
         ObjectAlreadyRegisteredException thrown =
                 assertThrows(ObjectAlreadyRegisteredException.class, () -> {
             accountancyService.create(accountancy);
         });
-        assertTrue(thrown.getMessage().contains(accountancyKey));
-        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancyKey, MOCK_USER);
+        assertTrue(thrown.getMessage().contains(accountancy.getKey()));
+        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancy.getKey(), MOCK_USER);
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
     }
 
     @Test
     void modifyByKey() {
-        //FIXME
-        String accountancyKey = "test";
-        Accountancy existingAccounting = new Accountancy();
-        existingAccounting.setKey(accountancyKey);
-        existingAccounting.setUsers(Collections.emptyList());
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey,
-                MOCK_USER)).thenReturn(Optional.of(existingAccounting));
-        Accountancy toSave = new Accountancy();
-        toSave.setId(existingAccounting.getId());
-        toSave.setUsers(existingAccounting.getUsers());
-        toSave.setKey("to-save");
-        toSave.setName("to-save");
-        Accountancy saved = new Accountancy();
-        saved.setId(existingAccounting.getId());
-        saved.setUsers(existingAccounting.getUsers());
-        saved.setKey(toSave.getKey());
-        saved.setName(toSave.getName());
-        when(accountancyRepositoryPortMock.save(toSave)).thenReturn(saved);
-        Accountancy result = accountancyService.modifyByKey(accountancyKey, toSave);
+        Accountancy existing = TestUtils.fakerAccountancy();
+        Accountancy modified = TestUtils.fakerAccountancy();
+        when(accountancyRepositoryPortMock.findByKeyAndUser(existing.getKey(),
+                MOCK_USER)).thenReturn(Optional.of(existing));
+        when(accountancyRepositoryPortMock.save(modified)).thenReturn(modified);
+        Accountancy result = accountancyService.modifyByKey(existing.getKey(), modified);
         assertNotNull(result);
-        assertEquals(existingAccounting.getId(), result.getId());
-        assertEquals(existingAccounting.getUsers().size(), result.getUsers().size());
-        assertEquals(toSave.getKey(), result.getKey());
-        assertEquals(toSave.getName(), result.getName());
-        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancyKey, MOCK_USER);
-        verify(accountancyRepositoryPortMock, times(1)).save(toSave);
+        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(existing.getKey(), MOCK_USER);
+        verify(accountancyRepositoryPortMock, times(1)).save(modified);
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
     }
 
