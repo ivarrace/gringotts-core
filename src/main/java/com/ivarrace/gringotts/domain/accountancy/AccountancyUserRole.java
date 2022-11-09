@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class AccountancyUserRole {
 
+    private String id;
     private User user;
     private AccountancyUserRoleType role;
 }

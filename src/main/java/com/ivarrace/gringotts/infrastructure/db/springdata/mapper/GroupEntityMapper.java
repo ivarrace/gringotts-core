@@ -1,6 +1,7 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.mapper;
 
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
+import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRole;
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.GroupEntity;
@@ -30,7 +31,12 @@ public class GroupEntityMapper {
         domain.setKey(entity.getKey());
         Accountancy accountancy = new Accountancy();
         accountancy.setId(entity.getAccountancy().getId().toString());
-        accountancy.setKey(entity.getAccountancy().getKey());
+        accountancy.setKey(entity.getAccountancy().getKey());List<AccountancyUserRole> users = entity.getAccountancy().getUsers().stream().map(accountancyUserEntity -> {
+            AccountancyUserRole userRole = new AccountancyUserRole();
+            userRole.setId(accountancyUserEntity.getId().toString());
+            return userRole;
+        }).collect(Collectors.toList());
+        accountancy.setUsers(users);
         domain.setAccountancy(accountancy);
         return domain;
     }

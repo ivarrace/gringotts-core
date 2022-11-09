@@ -45,7 +45,7 @@ public class AccountancyController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{accountancyKey}")
+    @DeleteMapping("/{accountancyKey}") //TODO delete cascade
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).OWNER)")
     public ResponseEntity<AccountancyResponse> delete(@PathVariable String accountancyKey) {
         accountancyServer.deleteByKey(accountancyKey);

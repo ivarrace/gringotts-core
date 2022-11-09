@@ -3,6 +3,7 @@ package com.ivarrace.gringotts.infrastructure.rest.spring.mapper;
 import com.ivarrace.gringotts.domain.accountancy.*;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.MovementResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewMovementCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.UpdateMovementCommand;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,11 +34,7 @@ public class MovementMapper {
         return accountancyList.stream().map(MovementMapper::toResponse).collect(Collectors.toList());
     }
 
-    public static Movement toDomain(String accountancyKey,
-                                    GroupType groupType,
-                                    String groupKey,
-                                    String categoryKey,
-                                    NewMovementCommand command) {
+    public static Movement toDomain(NewMovementCommand command) {
         if (command == null) {
             return null;
         }
@@ -46,16 +43,26 @@ public class MovementMapper {
         movement.setAmount(command.getAmount());
         movement.setInfo(command.getInfo());
         Category category = new Category();
-        category.setKey(categoryKey);
+        category.setKey(command.getCategoryKey());
         Group group = new Group();
-        group.setKey(groupKey);
-        group.setType(groupType);
+        group.setKey(command.getGroupKey());
+        group.setType(command.getGroupType());
         Accountancy accountancy = new Accountancy();
-        accountancy.setKey(accountancyKey);
+        accountancy.setKey(command.getAccountancyKey());
         group.setAccountancy(accountancy);
         category.setGroup(group);
         movement.setCategory(category);
         return movement;
     }
 
+    public static Movement toDomain(UpdateMovementCommand command) {
+        if (command == null) {
+            return null;
+        }
+        Movement movement = new Movement();
+        movement.setDate(command.getDate());
+        movement.setAmount(command.getAmount());
+        movement.setInfo(command.getInfo());
+        return movement;
+    }
 }

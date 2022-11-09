@@ -1,5 +1,6 @@
 package com.ivarrace.gringotts.application.service;
 
+import com.ivarrace.gringotts.application.exception.InsufficientPrivilegesException;
 import com.ivarrace.gringotts.application.exception.ObjectNotFoundException;
 import com.ivarrace.gringotts.application.ports.AuthPort;
 import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRole;
@@ -27,16 +28,35 @@ public class AccountancyUserRoleChecker {
                         .orElseThrow(() -> new ObjectNotFoundException(accountancyKey));
         switch (accountancyUserRoleType) {
             case OWNER:
-                return AccountancyUserRoleType.OWNER.equals(accountancyUserRole.getRole());
+                if (AccountancyUserRoleType.OWNER.equals(accountancyUserRole.getRole())) {
+                    return true;
+                } else {
+                    throw new InsufficientPrivilegesException(accountancyUserRoleType);
+                }
             case EDITOR:
-                return AccountancyUserRoleType.EDITOR.equals(accountancyUserRole.getRole()) ||
-                        AccountancyUserRoleType.OWNER.equals(accountancyUserRole.getRole());
+                if (AccountancyUserRoleType.EDITOR.equals(accountancyUserRole.getRole()) ||
+                        AccountancyUserRoleType.OWNER.equals(accountancyUserRole.getRole())) {
+                    return true;
+                } else {
+                    throw new InsufficientPrivilegesException(accountancyUserRoleType);
+                }
             case VIEWER:
-                return AccountancyUserRoleType.VIEWER.equals(accountancyUserRole.getRole()) ||
+                if (AccountancyUserRoleType.VIEWER.equals(accountancyUserRole.getRole()) ||
                         AccountancyUserRoleType.EDITOR.equals(accountancyUserRole.getRole()) ||
-                        AccountancyUserRoleType.OWNER.equals(accountancyUserRole.getRole());
+                        AccountancyUserRoleType.OWNER.equals(accountancyUserRole.getRole())) {
+                    return true;
+                } else {
+                    throw new InsufficientPrivilegesException(accountancyUserRoleType);
+                }
             default:
                 return false;
+        }
+    }
+
+    public void checkPermission(String accountancyKey,
+                                AccountancyUserRoleType accountancyUserRoleType) {
+        if (!hasPermission(accountancyKey, accountancyUserRoleType)) {
+            throw new InsufficientPrivilegesException(accountancyUserRoleType);
         }
     }
 

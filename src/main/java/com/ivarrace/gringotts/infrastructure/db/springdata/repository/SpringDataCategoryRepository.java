@@ -14,5 +14,5 @@ public interface SpringDataCategoryRepository extends JpaRepository<CategoryEnti
 
     List<CategoryEntity> findAllByGroup_key(String groupKey); //NOSONAR
 
-    Optional<CategoryEntity> findByKeyAndGroup_key(String categoryKey, String groupKey); //NOSONAR
+    Optional<CategoryEntity> findByKeyAndGroup_keyAndGroup_typeAndGroup_Accountancy_key(String categoryKey, String groupKey, String groupType, String accountancyKey); //NOSONAR
 }

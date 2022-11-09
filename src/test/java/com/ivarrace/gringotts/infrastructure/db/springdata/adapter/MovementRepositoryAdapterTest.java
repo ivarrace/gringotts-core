@@ -3,6 +3,7 @@ package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 import com.ivarrace.gringotts.TestUtils;
 import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
+import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.CategoryEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.MovementEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataCategoryRepository;
@@ -15,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,20 +29,25 @@ class MovementRepositoryAdapterTest {
 
     private MovementRepositoryAdapter repositoryAdapter;
 
+    private final UUID CURRENT_USER_UUID = UUID.randomUUID();
+    private User CURRENT_USER;
+
     @BeforeEach
     public void init() {
         springDataRepositoryMock = mock(SpringDataMovementRepository.class);
         repositoryAdapter = new MovementRepositoryAdapter(springDataRepositoryMock);
+        CURRENT_USER = new User();
+        CURRENT_USER.setId(CURRENT_USER_UUID.toString());
     }
 
     @Test
-    void findAllByCategory() {
+    void findAllByCategory() { //TODO test find all by
         MovementEntity entityExample = TestUtils.fakerMovementEntity();
-        when(springDataRepositoryMock.findAllByCategory_key(entityExample.getCategory().getKey()))
+        when(springDataRepositoryMock.findAllByCategory_keyAndCategory_Group_Accountancy_Users_UserId(entityExample.getCategory().getKey(), CURRENT_USER_UUID))
                 .thenReturn(Collections.singletonList(entityExample));
-        List<Movement> result = repositoryAdapter.findAllByCategory(entityExample.getCategory().getKey());
+        List<Movement> result = repositoryAdapter.findAllByCategory(entityExample.getCategory().getKey(), CURRENT_USER);
         assertEquals(1, result.size());
-        verify(springDataRepositoryMock, times(1)).findAllByCategory_key(entityExample.getCategory().getKey());
+        verify(springDataRepositoryMock, times(1)).findAllByCategory_keyAndCategory_Group_Accountancy_Users_UserId(entityExample.getCategory().getKey(), CURRENT_USER_UUID);
         verifyNoMoreInteractions(springDataRepositoryMock);
     }
 

@@ -1,9 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.mapper;
 
-import com.ivarrace.gringotts.domain.accountancy.Accountancy;
-import com.ivarrace.gringotts.domain.accountancy.Category;
-import com.ivarrace.gringotts.domain.accountancy.Group;
-import com.ivarrace.gringotts.domain.accountancy.GroupType;
+import com.ivarrace.gringotts.domain.accountancy.*;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.CategoryEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -34,6 +31,12 @@ public class CategoryEntityMapper {
         Accountancy accountancy = new Accountancy();
         accountancy.setId(entity.getGroup().getAccountancy().getId().toString());
         accountancy.setKey(entity.getGroup().getAccountancy().getKey());
+        List<AccountancyUserRole> users = entity.getGroup().getAccountancy().getUsers().stream().map(accountancyUserEntity -> {
+            AccountancyUserRole userRole = new AccountancyUserRole();
+            userRole.setId(accountancyUserEntity.getId().toString());
+            return userRole;
+        }).collect(Collectors.toList());
+        accountancy.setUsers(users);
         group.setAccountancy(accountancy);
         domain.setGroup(group);
         return domain;

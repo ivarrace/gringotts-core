@@ -1,16 +1,15 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.mapper;
 
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
-import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRole;
-import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.AccountancyEntity;
-import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.AccountancyUserEntity;
-import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.UserEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -38,7 +37,7 @@ public class AccountancyEntityMapper {
                             .map(GroupEntityMapper::toDomain)
                             .collect(Collectors.toList()));
         }
-        domain.setUsers(mapUsersToDomain(entity.getUsers()));
+        domain.setUsers(AccountancyUserEntityMapper.toDomain(entity.getUsers()));
         return domain;
     }
 
@@ -65,39 +64,7 @@ public class AccountancyEntityMapper {
         entity.setKey(domain.getKey());
         entity.setName(domain.getName());
         entity.setGroups(Collections.emptyList());
-        entity.setUsers(mapUsersToDbo(domain.getUsers(), entity));
+        entity.setUsers(AccountancyUserEntityMapper.toDbo(domain.getUsers(), entity));
         return entity;
     }
-
-    private static List<AccountancyUserEntity> mapUsersToDbo(List<AccountancyUserRole> users, AccountancyEntity accountancyEntity) {
-        if (users == null || users.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<AccountancyUserEntity> result = new ArrayList<>();
-        for (AccountancyUserRole accountancyUserRole : users) {
-            AccountancyUserEntity entity = new AccountancyUserEntity();
-            entity.setAccountancy(accountancyEntity);
-            UserEntity usr = new UserEntity();
-            usr.setId(Utils.toUUID(accountancyUserRole.getUser().getId()));
-            entity.setUser(usr);
-            entity.setScope(accountancyUserRole.getRole().name());
-            result.add(entity);
-        }
-        return result;
-    }
-
-    private static List<AccountancyUserRole> mapUsersToDomain(List<AccountancyUserEntity> users) {
-        if (users == null || users.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<AccountancyUserRole> result = new ArrayList<>();
-        for (AccountancyUserEntity accountancyUserEntity : users) {
-            AccountancyUserRole accountancyUserRole = new AccountancyUserRole();
-            accountancyUserRole.setUser(UserEntityMapper.toDomain(accountancyUserEntity.getUser()));
-            accountancyUserRole.setRole(AccountancyUserRoleType.valueOf(accountancyUserEntity.getScope()));
-            result.add(accountancyUserRole);
-        }
-        return result;
-    }
-
 }

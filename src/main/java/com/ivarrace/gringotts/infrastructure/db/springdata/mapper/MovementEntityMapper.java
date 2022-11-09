@@ -32,7 +32,12 @@ public class MovementEntityMapper {
         Accountancy accountancy = new Accountancy();
         accountancy.setId(entity.getCategory().getGroup().getAccountancy().getId().toString());
         accountancy.setKey(entity.getCategory().getGroup().getAccountancy().getKey());
-        group.setAccountancy(accountancy);
+        List<AccountancyUserRole> users = entity.getCategory().getGroup().getAccountancy().getUsers().stream().map(accountancyUserEntity -> {
+            AccountancyUserRole userRole = new AccountancyUserRole();
+            userRole.setId(accountancyUserEntity.getId().toString());
+            return userRole;
+        }).collect(Collectors.toList());
+        accountancy.setUsers(users);
         group.setAccountancy(accountancy);
         category.setGroup(group);
         domain.setCategory(category);

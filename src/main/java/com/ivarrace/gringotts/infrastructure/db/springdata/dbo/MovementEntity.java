@@ -25,6 +25,9 @@ public class MovementEntity extends BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+
     @PreUpdate
     public void preUpdateFunction(){
         category.setLastModified(LocalDateTime.now());

@@ -2,12 +2,13 @@ package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.application.service.CategoryService;
 import com.ivarrace.gringotts.application.service.GroupService;
-import com.ivarrace.gringotts.application.service.MovementService;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.*;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.CategoryResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.GroupResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewCategoryCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewGroupCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.CategoryMapper;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.GroupMapper;
-import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.MovementMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,6 @@ public class IncomesController {
 
     private final GroupService groupService;
     private final CategoryService categoryService;
-    private final MovementService movementService;
 
     @GetMapping("/")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
@@ -59,7 +59,7 @@ public class IncomesController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{groupKey}")
+    @DeleteMapping("/{groupKey}") //TODO delete cascade
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).OWNER)")
     public ResponseEntity<GroupResponse> delete(@PathVariable String accountancyKey, @PathVariable String groupKey) {
         groupService.delete(accountancyKey, groupKey, GroupType.INCOMES);
@@ -88,7 +88,7 @@ public class IncomesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable String accountancyKey, @PathVariable String groupKey, @PathVariable String categoryKey) {
         CategoryResponse response =
-                CategoryMapper.toResponse(categoryService.findByKeyInGroup(categoryKey, groupKey));
+                CategoryMapper.toResponse(categoryService.findByKeyInGroup(categoryKey, groupKey, GroupType.INCOMES, accountancyKey));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -104,63 +104,12 @@ public class IncomesController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{groupKey}/categories/{categoryKey}")
+    @DeleteMapping("/{groupKey}/categories/{categoryKey}") //TODO delete cascade
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).OWNER)")
     public ResponseEntity<CategoryResponse> deleteCategory(@PathVariable String accountancyKey,
                                                            @PathVariable String groupKey,
                                                            @PathVariable String categoryKey) {
-        categoryService.delete(categoryKey, groupKey);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/{groupKey}/categories/{categoryKey}/movements")
-    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
-    public ResponseEntity<List<MovementResponse>> getAllMovements(@PathVariable String accountancyKey,
-                                                                  @PathVariable String groupKey,
-                                                                  @PathVariable String categoryKey) {
-        List<MovementResponse> response = MovementMapper.toResponse(movementService.findAll(categoryKey));
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping("/{groupKey}/categories/{categoryKey}/movements")
-    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
-    public ResponseEntity<MovementResponse> save(@PathVariable String accountancyKey,
-                                                 @PathVariable String groupKey,
-                                                 @PathVariable String categoryKey,
-                                                 @RequestBody NewMovementCommand command) {
-        MovementResponse response =
-                MovementMapper.toResponse(movementService.create(MovementMapper.toDomain(accountancyKey, GroupType.INCOMES, groupKey, categoryKey, command)));
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/{groupKey}/categories/{categoryKey}/movements/{movementId}")
-    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
-    public ResponseEntity<MovementResponse> getMovementById(@PathVariable String accountancyKey,
-                                                            @PathVariable String groupKey,
-                                                            @PathVariable String categoryKey,
-                                                            @PathVariable String movementId) {
-        MovementResponse response = MovementMapper.toResponse(movementService.findById(movementId));
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PutMapping("/{groupKey}/categories/{categoryKey}/movements/{movementId}")
-    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
-    public ResponseEntity<MovementResponse> modifyMovement(@PathVariable String accountancyKey,
-                                                           @PathVariable String groupKey,
-                                                           @PathVariable String categoryKey,
-                                                           @PathVariable String movementId,
-                                                           @RequestBody NewMovementCommand command) {
-        MovementResponse response = MovementMapper.toResponse(movementService.modify(movementId, MovementMapper.toDomain(accountancyKey, GroupType.INCOMES, groupKey, categoryKey, command)));
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{groupKey}/categories/{categoryKey}/movements/{movementId}")
-    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
-    public ResponseEntity<MovementResponse> deleteMovement(@PathVariable String accountancyKey,
-                                                           @PathVariable String groupKey,
-                                                           @PathVariable String categoryKey,
-                                                           @PathVariable String movementId) {
-        movementService.delete(movementId);
+        categoryService.delete(categoryKey, groupKey, GroupType.INCOMES, accountancyKey);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

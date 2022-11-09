@@ -26,8 +26,8 @@ public class SpringBootServiceConfig {
     }
 
     @Bean
-    public MovementService movementService(MovementRepositoryAdapter movementRepositoryAdapter, CategoryService categoryService) {
-        return new MovementService(movementRepositoryAdapter, categoryService);
+    public MovementService movementService(MovementRepositoryAdapter movementRepositoryAdapter, CategoryService categoryService, SpringContextAdapter springContextAdapter, AccountancyUserRoleChecker accountancyUserRoleChecker) {
+        return new MovementService(movementRepositoryAdapter, categoryService, springContextAdapter, accountancyUserRoleChecker);
     }
 
     @Bean

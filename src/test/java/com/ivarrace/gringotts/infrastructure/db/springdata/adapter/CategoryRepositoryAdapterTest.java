@@ -50,24 +50,24 @@ class CategoryRepositoryAdapterTest {
     @Test
     void findByKeyInGroup_empty() {
         CategoryEntity entityExample = TestUtils.fakerCategoryEntity();
-        when(springDataRepositoryMock.findByKeyAndGroup_key(entityExample.getKey(), entityExample.getGroup().getKey()))
+        when(springDataRepositoryMock.findByKeyAndGroup_keyAndGroup_typeAndGroup_Accountancy_key(entityExample.getKey(), entityExample.getGroup().getKey(), entityExample.getGroup().getType(), entityExample.getGroup().getAccountancy().getKey()))
                 .thenReturn(Optional.empty());
         Optional<Category> result =
-                repositoryAdapter.findByKeyInGroup(entityExample.getKey(), entityExample.getGroup().getKey());
+                repositoryAdapter.findByKeyInGroup(entityExample.getKey(), entityExample.getGroup().getKey(), GroupType.valueOf(entityExample.getGroup().getType()), entityExample.getGroup().getAccountancy().getKey());
         assertTrue(result.isEmpty());
-        verify(springDataRepositoryMock, times(1)).findByKeyAndGroup_key(entityExample.getKey(), entityExample.getGroup().getKey());
+        verify(springDataRepositoryMock, times(1)).findByKeyAndGroup_keyAndGroup_typeAndGroup_Accountancy_key(entityExample.getKey(), entityExample.getGroup().getKey(), entityExample.getGroup().getType(), entityExample.getGroup().getAccountancy().getKey());
         verifyNoMoreInteractions(springDataRepositoryMock);
     }
 
     @Test
     void findByKeyInGroup() {
         CategoryEntity entityExample = TestUtils.fakerCategoryEntity();
-        when(springDataRepositoryMock.findByKeyAndGroup_key(entityExample.getKey(), entityExample.getGroup().getKey()))
+        when(springDataRepositoryMock.findByKeyAndGroup_keyAndGroup_typeAndGroup_Accountancy_key(entityExample.getKey(), entityExample.getGroup().getKey(), entityExample.getGroup().getType(), entityExample.getGroup().getAccountancy().getKey()))
                 .thenReturn(Optional.of(entityExample));
         Optional<Category> result =
-                repositoryAdapter.findByKeyInGroup(entityExample.getKey(), entityExample.getGroup().getKey());
+                repositoryAdapter.findByKeyInGroup(entityExample.getKey(), entityExample.getGroup().getKey(), GroupType.valueOf(entityExample.getGroup().getType()), entityExample.getGroup().getAccountancy().getKey());
         assertTrue(result.isPresent());
-        verify(springDataRepositoryMock, times(1)).findByKeyAndGroup_key(entityExample.getKey(), entityExample.getGroup().getKey());
+        verify(springDataRepositoryMock, times(1)).findByKeyAndGroup_keyAndGroup_typeAndGroup_Accountancy_key(entityExample.getKey(), entityExample.getGroup().getKey(), entityExample.getGroup().getType(), entityExample.getGroup().getAccountancy().getKey());
         verifyNoMoreInteractions(springDataRepositoryMock);
     }
 
