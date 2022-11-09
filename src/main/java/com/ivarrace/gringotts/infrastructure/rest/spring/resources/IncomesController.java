@@ -59,7 +59,7 @@ public class IncomesController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{groupKey}") //TODO delete cascade
+    @DeleteMapping("/{groupKey}")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).OWNER)")
     public ResponseEntity<GroupResponse> delete(@PathVariable String accountancyKey, @PathVariable String groupKey) {
         groupService.delete(accountancyKey, groupKey, GroupType.INCOMES);
@@ -104,7 +104,7 @@ public class IncomesController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{groupKey}/categories/{categoryKey}") //TODO delete cascade
+    @DeleteMapping("/{groupKey}/categories/{categoryKey}")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).OWNER)")
     public ResponseEntity<CategoryResponse> deleteCategory(@PathVariable String accountancyKey,
                                                            @PathVariable String groupKey,

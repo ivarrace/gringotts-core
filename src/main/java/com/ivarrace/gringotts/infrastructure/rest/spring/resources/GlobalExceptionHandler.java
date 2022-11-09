@@ -1,9 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
-import com.ivarrace.gringotts.application.exception.InsufficientPrivilegesException;
-import com.ivarrace.gringotts.application.exception.InvalidParameterException;
-import com.ivarrace.gringotts.application.exception.ObjectAlreadyRegisteredException;
-import com.ivarrace.gringotts.application.exception.ObjectNotFoundException;
+import com.ivarrace.gringotts.application.exception.*;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,5 +53,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> insufficientPrivilegesException(InsufficientPrivilegesException exception) {
         ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(value = UserAlreadyRegisteredException.class)
+    public ResponseEntity<ErrorResponse> userAlreadyRegisteredException(UserAlreadyRegisteredException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }
