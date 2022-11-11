@@ -18,7 +18,5 @@ public interface SpringDataMovementRepository extends JpaRepository<MovementEnti
 
     List<MovementEntity> findAllByCategory_Group_Accountancy_keyAndCategory_Group_Accountancy_Users_UserId(String accountancyKey, UUID userId); //NOSONAR
 
-    //List<MovementEntity> findAllByUser_id(UUID userId); //NOSONAR
-
     List<MovementEntity> findAllByCategory_Group_Accountancy_Users_UserId(UUID userId); //NOSONAR
 }

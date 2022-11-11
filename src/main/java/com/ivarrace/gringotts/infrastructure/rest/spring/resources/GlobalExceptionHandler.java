@@ -10,54 +10,72 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.servlet.http.HttpServletRequest;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ObjectNotFoundException.class)
-    public ResponseEntity<ErrorResponse> notFoundException(ObjectNotFoundException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> notFoundException(ObjectNotFoundException exception,
+                                                           final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(value = InvalidParameterException.class)
-    public ResponseEntity<ErrorResponse> invalidParameterException(InvalidParameterException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> invalidParameterException(InvalidParameterException exception,
+                                                                   final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(value = ObjectAlreadyRegisteredException.class)
-    public ResponseEntity<ErrorResponse> objectAlreadyRegisteredException(ObjectAlreadyRegisteredException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> objectAlreadyRegisteredException(ObjectAlreadyRegisteredException exception,
+                                                                          final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(value = UsernameNotFoundException.class)
-    public ResponseEntity<ErrorResponse> usernameNotFoundException(UsernameNotFoundException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ErrorResponse> usernameNotFoundException(UsernameNotFoundException exception,
+                                                                   final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
-        ErrorResponse errorResponse = new ErrorResponse("MethodArgumentTypeMismatchException: "+exception.getName());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception,
+                                                                             final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> httpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> httpMessageNotReadableException(HttpMessageNotReadableException exception,
+                                                                         final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(value = InsufficientPrivilegesException.class)
-    public ResponseEntity<ErrorResponse> insufficientPrivilegesException(InsufficientPrivilegesException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    public ResponseEntity<ErrorResponse> insufficientPrivilegesException(InsufficientPrivilegesException exception,
+                                                                         final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.FORBIDDEN;
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(value = UserAlreadyRegisteredException.class)
-    public ResponseEntity<ErrorResponse> userAlreadyRegisteredException(UserAlreadyRegisteredException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    public ResponseEntity<ErrorResponse> userAlreadyRegisteredException(UserAlreadyRegisteredException exception,
+                                                                        final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 }

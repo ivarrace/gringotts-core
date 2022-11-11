@@ -5,6 +5,7 @@ import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
 import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.MovementEntity;
+import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.AccountancyEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.MovementEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.Utils;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataMovementRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MovementRepositoryAdapter implements MovementRepositoryPort {
@@ -24,27 +26,27 @@ public class MovementRepositoryAdapter implements MovementRepositoryPort {
 
     @Override
     public List<Movement> findAllByCategory(String categoryKey, User currentUser) {
-        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_keyAndCategory_Group_Accountancy_Users_UserId(categoryKey, currentUser.getUUID()));
+        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_keyAndCategory_Group_Accountancy_Users_UserId(categoryKey, UUID.fromString(currentUser.getId())));
     }
 
     @Override
     public List<Movement> findAllByGroup(String groupKey, GroupType groupType, User currentUser) {
-        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_Group_keyAndCategory_Group_typeAndCategory_Group_Accountancy_Users_UserId(groupKey, groupType.name(), currentUser.getUUID()));
+        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_Group_keyAndCategory_Group_typeAndCategory_Group_Accountancy_Users_UserId(groupKey, groupType.name(), UUID.fromString(currentUser.getId())));
     }
 
     @Override
     public List<Movement> findAllByGroupType(GroupType groupType, User currentUser) {
-        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_Group_typeAndCategory_Group_Accountancy_Users_UserId(groupType.name(), currentUser.getUUID()));
+        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_Group_typeAndCategory_Group_Accountancy_Users_UserId(groupType.name(), UUID.fromString(currentUser.getId())));
     }
 
     @Override
     public List<Movement> findAllByAccountancy(String accountancyKey, User currentUser) {
-        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_Group_Accountancy_keyAndCategory_Group_Accountancy_Users_UserId(accountancyKey, currentUser.getUUID()));
+        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_Group_Accountancy_keyAndCategory_Group_Accountancy_Users_UserId(accountancyKey, UUID.fromString(currentUser.getId())));
     }
 
     @Override
     public List<Movement> findAllByUser(User currentUser) {
-        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_Group_Accountancy_Users_UserId(currentUser.getUUID()));
+        return MovementEntityMapper.toDomainList(springDataMovementRepository.findAllByCategory_Group_Accountancy_Users_UserId(UUID.fromString(currentUser.getId())));
     }
 
     @Override

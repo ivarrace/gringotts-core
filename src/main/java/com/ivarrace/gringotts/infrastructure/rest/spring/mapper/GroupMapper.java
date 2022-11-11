@@ -1,56 +1,30 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.mapper;
 
-import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
-import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.Utils;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.GroupResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewGroupCommand;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class GroupMapper {
+@Mapper(componentModel = "spring",
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        uses = {UtilsMapper.class})
+public interface GroupMapper {
 
-    private GroupMapper() {
-        throw new IllegalStateException("Utility class");
-    }
+    GroupMapper INSTANCE = Mappers.getMapper(GroupMapper.class);
 
-    public static GroupResponse toResponse(Group group) {
-        if (group == null) {
-            return null;
-        }
-        GroupResponse response = new GroupResponse();
-        response.setId(group.getId());
-        response.setKey(group.getKey());
-        response.setName(group.getName());
-        response.setCreatedDate(group.getCreatedDate());
-        response.setLastModified(group.getLastModified());
-        response.setCategories(CategoryMapper.toResponse(group.getCategories()));
-        return response;
-    }
+    GroupResponse toResponse(Group group);
 
-    public static List<GroupResponse> toResponse(List<Group> groups) {
-        if (groups == null || groups.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return groups.stream().map(GroupMapper::toResponse).collect(Collectors.toList());
-    }
+    List<GroupResponse> toResponse(List<Group> groups);
 
-    public static Group toDomain(NewGroupCommand command, GroupType type,
-                                 String accountancyKey) {
-        if (command == null) {
-            return null;
-        }
-        Group group = new Group();
-        group.setName(command.getName());
-        group.setType(type);
-        Accountancy accountancy = new Accountancy();
-        accountancy.setKey(accountancyKey);
-        group.setAccountancy(accountancy);
-        group.setKey(Utils.nameToKey(command.getName()));
-        return group;
-    }
+    @Mapping(target = "key", source = "command.name", qualifiedByName = "nameToKey")
+    @Mapping(target = "type", source="groupType")
+    @Mapping(target = "accountancy.key", source="accountancyKey")
+    Group toDomain(NewGroupCommand command, GroupType groupType, String accountancyKey);
 
 }

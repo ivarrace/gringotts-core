@@ -1,38 +1,23 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.mapper;
 
 import com.ivarrace.gringotts.domain.user.User;
-import com.ivarrace.gringotts.domain.user.UserAuthority;
-import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.Utils;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewUserCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.UserResponse;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-public class UserMapper {
+@Mapper(componentModel = "spring", injectionStrategy =
+        InjectionStrategy.CONSTRUCTOR, uses = {UtilsMapper.class,
+        GroupMapper.class})
+public interface UserMapper {
 
-    private UserMapper() {
-        throw new IllegalStateException("Utility class");
-    }
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-   public static UserResponse toResponse(User user) {
-        if (user == null) {
-            return null;
-        }
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId(Utils.toUUID(user.getId()));
-        userResponse.setCreatedDate(user.getCreatedDate());
-        userResponse.setLastModified(user.getLastModified());
-        userResponse.setUsername(user.getUsername());
-        userResponse.setAuthority(user.getAuthority().name());
-        return userResponse;
-    }
+    @Mapping(target = "id", source = "user.id", qualifiedByName ="stringToUUID")
+    UserResponse toResponse(User user);
 
-    public static User toDomain(NewUserCommand newUser) {
-        if (newUser == null) {
-            return null;
-        }
-        User user = new User();
-        user.setUsername(newUser.getUsername());
-        user.setPassword(newUser.getPassword());
-        user.setAuthority(UserAuthority.USER);
-        return user;
-    }
+    @Mapping(target = "authority", constant = "USER")
+    User toDomain(NewUserCommand newUser);
 }

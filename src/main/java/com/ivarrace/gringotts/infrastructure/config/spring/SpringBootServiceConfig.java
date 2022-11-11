@@ -40,4 +40,9 @@ public class SpringBootServiceConfig {
     public AccountancyUserRoleChecker accountancyUserRoleChecker(AccountancyService accountancyService, SpringContextAdapter springContextAdapter) {
         return new AccountancyUserRoleChecker(accountancyService, springContextAdapter);
     }
+
+    @Bean
+    public ReportService reportService(MovementService movementService) {
+        return new ReportService(movementService);
+    }
 }

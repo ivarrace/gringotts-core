@@ -21,19 +21,19 @@ public class AccountancyController {
 
     @GetMapping("/")
     public ResponseEntity<List<AccountancyResponse>> getAll() {
-        List<AccountancyResponse> response = AccountancyMapper.toResponse(accountancyServer.findAll());
+        List<AccountancyResponse> response = AccountancyMapper.INSTANCE.toResponseList(accountancyServer.findAll());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("")
     public ResponseEntity<AccountancyResponse> save(@RequestBody NewAccountancyCommand command) {
-        AccountancyResponse response = AccountancyMapper.toResponse(accountancyServer.create(AccountancyMapper.toDomain(command)));
+        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.create(AccountancyMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{accountancyKey}")
     public ResponseEntity<AccountancyResponse> getByKey(@PathVariable String accountancyKey) {
-        AccountancyResponse response = AccountancyMapper.toResponse(accountancyServer.findByKey(accountancyKey));
+        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findByKey(accountancyKey));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -41,7 +41,7 @@ public class AccountancyController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
     public ResponseEntity<AccountancyResponse> modify(@PathVariable String accountancyKey,
                                          @RequestBody NewAccountancyCommand command) {
-        AccountancyResponse response = AccountancyMapper.toResponse(accountancyServer.modifyByKey(accountancyKey, AccountancyMapper.toDomain(command)));
+        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.modifyByKey(accountancyKey, AccountancyMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

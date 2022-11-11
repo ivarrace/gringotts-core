@@ -23,7 +23,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody @Valid NewUserCommand request) {
-        UserResponse response = UserMapper.toResponse(userService.save(UserMapper.toDomain(request)));
+        UserResponse response = UserMapper.INSTANCE.toResponse(userService.save(UserMapper.INSTANCE.toDomain(request)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 import com.ivarrace.gringotts.application.repository.AccountancyRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.user.User;
+import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.AccountancyEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.AccountancyEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.Utils;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataAccountancyRepository;

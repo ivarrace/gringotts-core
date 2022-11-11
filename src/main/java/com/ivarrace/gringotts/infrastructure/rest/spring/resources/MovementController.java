@@ -26,27 +26,27 @@ public class MovementController {
                                                                   @RequestParam(required = false) GroupType groupType,
                                                                   @RequestParam(required = false) String categoryKey) {
         //TODO pageable
-        List<MovementResponse> response = MovementMapper.toResponse(movementService.findAll(accountancyKey,groupKey, groupType,categoryKey));
+        List<MovementResponse> response = MovementMapper.INSTANCE.toResponse(movementService.findAll(accountancyKey,groupKey, groupType,categoryKey));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/")
     public ResponseEntity<MovementResponse> save(@RequestBody NewMovementCommand command) {
         MovementResponse response =
-                MovementMapper.toResponse(movementService.create(MovementMapper.toDomain(command)));
+                MovementMapper.INSTANCE.toResponse(movementService.create(MovementMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{movementId}")
     public ResponseEntity<MovementResponse> getMovementById(@PathVariable String movementId) {
-        MovementResponse response = MovementMapper.toResponse(movementService.findById(movementId));
+        MovementResponse response = MovementMapper.INSTANCE.toResponse(movementService.findById(movementId));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{movementId}")
     public ResponseEntity<MovementResponse> modifyMovement(@PathVariable String movementId,
                                                            @RequestBody UpdateMovementCommand command) {
-        MovementResponse response = MovementMapper.toResponse(movementService.modify(movementId, MovementMapper.toDomain(command)));
+        MovementResponse response = MovementMapper.INSTANCE.toResponse(movementService.modify(movementId, MovementMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

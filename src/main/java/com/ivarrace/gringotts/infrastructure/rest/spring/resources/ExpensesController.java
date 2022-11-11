@@ -29,7 +29,7 @@ public class ExpensesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<List<GroupResponse>> getAllIncomesByAccountancyKey(@PathVariable String accountancyKey) {
         List<GroupResponse> response =
-                GroupMapper.toResponse(groupService.findByAccountancyKeyAndType(accountancyKey, GroupType.EXPENSES));
+                GroupMapper.INSTANCE.toResponse(groupService.findByAccountancyKeyAndType(accountancyKey, GroupType.EXPENSES));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -37,7 +37,7 @@ public class ExpensesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
     public ResponseEntity<GroupResponse> save(@PathVariable String accountancyKey, @RequestBody NewGroupCommand command) {
         GroupResponse response =
-                GroupMapper.toResponse(groupService.create(GroupMapper.toDomain(command, GroupType.EXPENSES, accountancyKey)));
+                GroupMapper.INSTANCE.toResponse(groupService.create(GroupMapper.INSTANCE.toDomain(command, GroupType.EXPENSES, accountancyKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -45,7 +45,7 @@ public class ExpensesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<GroupResponse> getById(@PathVariable String accountancyKey, @PathVariable String groupKey) {
         GroupResponse response =
-                GroupMapper.toResponse(groupService.findByKey(groupKey,
+                GroupMapper.INSTANCE.toResponse(groupService.findByKey(groupKey,
                         accountancyKey, GroupType.EXPENSES));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -55,10 +55,9 @@ public class ExpensesController {
     public ResponseEntity<GroupResponse> modify(@PathVariable String accountancyKey, @PathVariable String groupKey,
                                                 @RequestBody NewGroupCommand command) {
         GroupResponse response =
-                GroupMapper.toResponse(
+                GroupMapper.INSTANCE.toResponse(
                         groupService.modify(groupKey,
-                                GroupMapper.toDomain(command, GroupType.EXPENSES,
-                                        accountancyKey)));
+                                GroupMapper.INSTANCE.toDomain(command, GroupType.EXPENSES, accountancyKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -73,7 +72,7 @@ public class ExpensesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<List<CategoryResponse>> getIncomeCategories(@PathVariable String accountancyKey, @PathVariable String groupKey) {
         List<CategoryResponse> response =
-                CategoryMapper.toResponse(categoryService.findAllInGroup(groupKey));
+                CategoryMapper.INSTANCE.toResponse(categoryService.findAllInGroup(groupKey));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -83,7 +82,7 @@ public class ExpensesController {
                                                          @PathVariable String groupKey,
                                                          @RequestBody NewCategoryCommand command) {
         CategoryResponse response =
-                CategoryMapper.toResponse(categoryService.create(CategoryMapper.toDomain(command, GroupType.EXPENSES, accountancyKey, groupKey)));
+                CategoryMapper.INSTANCE.toResponse(categoryService.create(CategoryMapper.INSTANCE.toDomain(command, groupKey, GroupType.EXPENSES, accountancyKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -91,7 +90,7 @@ public class ExpensesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable String accountancyKey, @PathVariable String groupKey, @PathVariable String categoryKey) {
         CategoryResponse response =
-                CategoryMapper.toResponse(categoryService.findByKeyInGroup(categoryKey, groupKey, GroupType.EXPENSES, accountancyKey));
+                CategoryMapper.INSTANCE.toResponse(categoryService.findByKeyInGroup(categoryKey, groupKey, GroupType.EXPENSES, accountancyKey));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -102,10 +101,10 @@ public class ExpensesController {
                                                            @PathVariable String categoryKey,
                                                            @RequestBody NewCategoryCommand command) {
         CategoryResponse response =
-                CategoryMapper.toResponse(
+                CategoryMapper.INSTANCE.toResponse(
                         categoryService.modify(categoryKey,
-                                CategoryMapper.toDomain(command, GroupType.EXPENSES,
-                                        accountancyKey, groupKey)));
+                                CategoryMapper.INSTANCE.toDomain(command, groupKey, GroupType.EXPENSES,
+                                        accountancyKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
