@@ -8,11 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserService {
 
-    private final AuthPort authPort;
     private final UserRepositoryPort userRepositoryPort;
 
-    public UserService(AuthPort authPort, UserRepositoryPort userRepositoryPort) {
-        this.authPort = authPort;
+    public UserService(UserRepositoryPort userRepositoryPort) {
         this.userRepositoryPort = userRepositoryPort;
     }
 

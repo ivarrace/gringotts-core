@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Configuration;
 public class SpringBootServiceConfig {
 
     @Bean
-    public AccountancyService accountancyService(AccountancyRepositoryAdapter accountancyRepositoryAdapter, SpringContextAdapter springContextAdapter) {
+    public AccountancyService accountancyService(AccountancyRepositoryAdapter accountancyRepositoryAdapter,
+                                                 SpringContextAdapter springContextAdapter) {
         return new AccountancyService(accountancyRepositoryAdapter, springContextAdapter);
     }
 
@@ -21,23 +22,28 @@ public class SpringBootServiceConfig {
     }
 
     @Bean
-    public CategoryService categoryService(CategoryRepositoryAdapter categoryRepositoryAdapter, GroupService groupService) {
+    public CategoryService categoryService(CategoryRepositoryAdapter categoryRepositoryAdapter,
+                                           GroupService groupService) {
         return new CategoryService(categoryRepositoryAdapter, groupService);
     }
 
     @Bean
-    public MovementService movementService(MovementRepositoryAdapter movementRepositoryAdapter, CategoryService categoryService, SpringContextAdapter springContextAdapter, AccountancyUserRoleChecker accountancyUserRoleChecker) {
-        return new MovementService(movementRepositoryAdapter, categoryService, springContextAdapter, accountancyUserRoleChecker);
+    public MovementService movementService(MovementRepositoryAdapter movementRepositoryAdapter,
+                                           CategoryService categoryService,
+                                           SpringContextAdapter springContextAdapter,
+                                           AccountancyUserRoleChecker accountancyUserRoleChecker) {
+        return new MovementService(movementRepositoryAdapter, categoryService, springContextAdapter,
+                accountancyUserRoleChecker);
     }
 
     @Bean
-    public UserService userService(SpringContextAdapter adapter,
-                                   UserRepositoryAdapter userRepository) {
-        return new UserService(adapter, userRepository);
+    public UserService userService(UserRepositoryAdapter userRepository) {
+        return new UserService(userRepository);
     }
 
     @Bean
-    public AccountancyUserRoleChecker accountancyUserRoleChecker(AccountancyService accountancyService, SpringContextAdapter springContextAdapter) {
+    public AccountancyUserRoleChecker accountancyUserRoleChecker(AccountancyService accountancyService,
+                                                                 SpringContextAdapter springContextAdapter) {
         return new AccountancyUserRoleChecker(accountancyService, springContextAdapter);
     }
 
