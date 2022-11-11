@@ -4,7 +4,6 @@ import com.ivarrace.gringotts.application.repository.GroupRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.GroupEntity;
-import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.AccountancyEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.GroupEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataGroupRepository;
 import org.springframework.stereotype.Service;

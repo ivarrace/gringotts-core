@@ -5,7 +5,6 @@ import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
 import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.MovementEntity;
-import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.AccountancyEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.MovementEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.Utils;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataMovementRepository;

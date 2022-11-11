@@ -1,6 +1,5 @@
 package com.ivarrace.gringotts.application.service;
 
-import com.ivarrace.gringotts.application.repository.MovementRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
 import com.ivarrace.gringotts.domain.accountancy.Report;

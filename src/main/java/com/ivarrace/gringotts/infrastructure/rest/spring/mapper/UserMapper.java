@@ -15,7 +15,6 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(target = "id", source = "user.id", qualifiedByName ="stringToUUID")
     UserResponse toResponse(User user);
 
     @Mapping(target = "authority", constant = "USER")

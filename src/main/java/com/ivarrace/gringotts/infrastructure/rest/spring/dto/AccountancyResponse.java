@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 public class AccountancyResponse {
 
-    private String id;
     private String key;
     private LocalDateTime createdDate;
     private LocalDateTime lastModified;

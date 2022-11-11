@@ -4,7 +4,6 @@ import com.ivarrace.gringotts.application.repository.CategoryRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.CategoryEntity;
-import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.AccountancyEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.CategoryEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataCategoryRepository;
 import org.springframework.stereotype.Service;

@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 public class GroupResponse {
 
-    private String id;
     private String key;
     private String name;
     private LocalDateTime createdDate;

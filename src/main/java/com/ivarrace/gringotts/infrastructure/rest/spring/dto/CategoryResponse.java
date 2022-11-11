@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Setter
 public class CategoryResponse {
 
-    private String id;
     private String key;
     private String name;
     private LocalDateTime createdDate;
