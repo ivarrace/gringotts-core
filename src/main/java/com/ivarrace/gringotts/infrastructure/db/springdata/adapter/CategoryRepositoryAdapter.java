@@ -1,6 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 
-import com.ivarrace.gringotts.application.repository.CategoryRepositoryPort;
+import com.ivarrace.gringotts.application.ports.data.CategoryRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.CategoryEntity;
@@ -21,12 +21,12 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
     }
 
     @Override
-    public List<Category> findAllInGroup(String groupKey) {
+    public List<Category> findAllByGroup(String groupKey) {
         return CategoryEntityMapper.toDomainList(categoryRepository.findAllByGroup_key(groupKey));
     }
 
     @Override
-    public Optional<Category> findByKeyInGroup(String categoryKey, String groupKey, GroupType groupType, String accountancyKey) {
+    public Optional<Category> findByKeyAndGroup(String categoryKey, String groupKey, GroupType groupType, String accountancyKey) {
         return CategoryEntityMapper.toDomain(
                 categoryRepository.findByKeyAndGroup_keyAndGroup_typeAndGroup_Accountancy_key(categoryKey, groupKey, groupType.name(), accountancyKey));
     }

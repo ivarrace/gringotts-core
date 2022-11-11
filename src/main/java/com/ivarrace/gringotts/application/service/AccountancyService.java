@@ -1,12 +1,12 @@
 package com.ivarrace.gringotts.application.service;
 
-import com.ivarrace.gringotts.application.exception.ObjectAlreadyRegisteredException;
-import com.ivarrace.gringotts.application.exception.ObjectNotFoundException;
-import com.ivarrace.gringotts.application.ports.AuthPort;
-import com.ivarrace.gringotts.application.repository.AccountancyRepositoryPort;
+import com.ivarrace.gringotts.application.ports.data.AccountancyRepositoryPort;
+import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRole;
 import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType;
+import com.ivarrace.gringotts.domain.exception.ObjectAlreadyRegisteredException;
+import com.ivarrace.gringotts.domain.exception.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -18,8 +18,7 @@ public class AccountancyService {
     private final AccountancyRepositoryPort accountancyRepositoryPort;
     private final AuthPort authPort;
 
-    public AccountancyService(AccountancyRepositoryPort accountancyRepositoryPort,
-                              AuthPort authPort) {
+    public AccountancyService(AccountancyRepositoryPort accountancyRepositoryPort, AuthPort authPort) {
         this.accountancyRepositoryPort = accountancyRepositoryPort;
         this.authPort = authPort;
     }
@@ -33,8 +32,9 @@ public class AccountancyService {
     }
 
     public Accountancy create(Accountancy accountancy) {
-        Optional<Accountancy> existing = accountancyRepositoryPort.findByKeyAndUser(accountancy.getKey(), authPort.getCurrentUser());
-        if(existing.isPresent()){
+        Optional<Accountancy> existing = accountancyRepositoryPort.findByKeyAndUser(accountancy.getKey(),
+                authPort.getCurrentUser());
+        if (existing.isPresent()) {
             throw new ObjectAlreadyRegisteredException(accountancy.getKey());
         }
         AccountancyUserRole userRole = new AccountancyUserRole();

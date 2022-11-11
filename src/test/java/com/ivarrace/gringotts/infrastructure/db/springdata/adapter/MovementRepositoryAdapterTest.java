@@ -1,12 +1,9 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 
 import com.ivarrace.gringotts.TestUtils;
-import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
 import com.ivarrace.gringotts.domain.user.User;
-import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.CategoryEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.MovementEntity;
-import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataCategoryRepository;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataMovementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -25,11 +22,9 @@ import static org.mockito.Mockito.*;
 @Tag("UnitTest")
 class MovementRepositoryAdapterTest {
 
-    private SpringDataMovementRepository springDataRepositoryMock;
-
-    private MovementRepositoryAdapter repositoryAdapter;
-
     private final UUID CURRENT_USER_UUID = UUID.randomUUID();
+    private SpringDataMovementRepository springDataRepositoryMock;
+    private MovementRepositoryAdapter repositoryAdapter;
     private User CURRENT_USER;
 
     @BeforeEach

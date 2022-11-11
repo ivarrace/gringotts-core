@@ -5,7 +5,6 @@ import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.AccountancyEntity;
-import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.GroupEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataAccountancyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,11 +23,9 @@ import static org.mockito.Mockito.*;
 @Tag("UnitTest")
 class AccountancyRepositoryAdapterTest {
 
-    private SpringDataAccountancyRepository accountancyRepositoryMock;
-
-    private AccountancyRepositoryAdapter accountancyRepositoryAdapter;
-
     private final UUID CURRENT_USER_UUID = UUID.randomUUID();
+    private SpringDataAccountancyRepository accountancyRepositoryMock;
+    private AccountancyRepositoryAdapter accountancyRepositoryAdapter;
     private User CURRENT_USER;
 
     @BeforeEach
@@ -58,7 +54,8 @@ class AccountancyRepositoryAdapterTest {
                 accountancyRepositoryAdapter.findByKeyAndUser(accountancyEntityExample.getKey(),
                         CURRENT_USER);
         assertTrue(result.isEmpty());
-        verify(accountancyRepositoryMock, times(1)).findByKeyAndUsers_UserId(accountancyEntityExample.getKey(), CURRENT_USER_UUID);
+        verify(accountancyRepositoryMock, times(1)).findByKeyAndUsers_UserId(accountancyEntityExample.getKey(),
+                CURRENT_USER_UUID);
         verifyNoMoreInteractions(accountancyRepositoryMock);
     }
 
@@ -70,7 +67,8 @@ class AccountancyRepositoryAdapterTest {
                 accountancyRepositoryAdapter.findByKeyAndUser(accountancyEntity.getKey(),
                         CURRENT_USER);
         assertTrue(result.isPresent());
-        verify(accountancyRepositoryMock, times(1)).findByKeyAndUsers_UserId(accountancyEntity.getKey(), CURRENT_USER_UUID);
+        verify(accountancyRepositoryMock, times(1)).findByKeyAndUsers_UserId(accountancyEntity.getKey(),
+                CURRENT_USER_UUID);
         verifyNoMoreInteractions(accountancyRepositoryMock);
         assertAll("Mapped values",
                 () -> assertEquals(accountancyEntity.getId().toString(), result.get().getId()),
@@ -110,7 +108,8 @@ class AccountancyRepositoryAdapterTest {
     @Test
     void save_withGroups() {
         AccountancyEntity accountancyEntity = TestUtils.fakerAccountancyEntity();
-        accountancyEntity.setGroups(List.of(TestUtils.fakerGroupEntity(),TestUtils.fakerGroupEntity(),TestUtils.fakerGroupEntity(),TestUtils.fakerGroupEntity(),TestUtils.fakerGroupEntity()));
+        accountancyEntity.setGroups(List.of(TestUtils.fakerGroupEntity(), TestUtils.fakerGroupEntity(),
+                TestUtils.fakerGroupEntity(), TestUtils.fakerGroupEntity(), TestUtils.fakerGroupEntity()));
         when(accountancyRepositoryMock.save(any())).thenReturn(accountancyEntity);
         Accountancy result = accountancyRepositoryAdapter.save(any());
         verify(accountancyRepositoryMock, times(1)).save(any());

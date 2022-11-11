@@ -1,4 +1,4 @@
-package com.ivarrace.gringotts.application.repository;
+package com.ivarrace.gringotts.application.ports.data;
 
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.accountancy.Movement;

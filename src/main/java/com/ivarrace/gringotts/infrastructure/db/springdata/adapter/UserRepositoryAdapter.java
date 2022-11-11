@@ -1,7 +1,7 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 
-import com.ivarrace.gringotts.application.exception.UserAlreadyRegisteredException;
-import com.ivarrace.gringotts.application.repository.UserRepositoryPort;
+import com.ivarrace.gringotts.domain.exception.UserAlreadyRegisteredException;
+import com.ivarrace.gringotts.application.ports.data.UserRepositoryPort;
 import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.UserEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.UserEntityMapper;

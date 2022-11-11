@@ -1,7 +1,7 @@
 package com.ivarrace.gringotts.application.service;
 
-import com.ivarrace.gringotts.application.ports.AuthPort;
-import com.ivarrace.gringotts.application.repository.UserRepositoryPort;
+import com.ivarrace.gringotts.application.ports.data.UserRepositoryPort;
+import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,11 +16,7 @@ public class UserService {
         this.userRepositoryPort = userRepositoryPort;
     }
 
-    public User getCurrentUser(){
-        return authPort.getCurrentUser();
-    }
-
-    public User save(User user){
-       return userRepositoryPort.save(user);
+    public User save(User user) {
+        return userRepositoryPort.save(user);
     }
 }

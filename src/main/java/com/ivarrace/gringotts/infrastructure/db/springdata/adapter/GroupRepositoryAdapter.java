@@ -1,6 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 
-import com.ivarrace.gringotts.application.repository.GroupRepositoryPort;
+import com.ivarrace.gringotts.application.ports.data.GroupRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.GroupEntity;
@@ -21,14 +21,14 @@ public class GroupRepositoryAdapter implements GroupRepositoryPort {
     }
 
     @Override
-    public List<Group> findAllByTypeInAccountancy(GroupType type, String accountancyKey) {
+    public List<Group> findAllByTypeAndAccountancy(GroupType type, String accountancyKey) {
         return GroupEntityMapper.toDomainList(repository.findAllByTypeAndAccountancy_key(type.name(), accountancyKey));
     }
 
     @Override
-    public Optional<Group> findByKeyAndTypeInAccountancy(String groupKey,
-                                                           GroupType groupType,
-                                                           String accountancyKey) {
+    public Optional<Group> findByKeyAndTypeAndAccountancy(String groupKey,
+                                                          GroupType groupType,
+                                                          String accountancyKey) {
         return GroupEntityMapper.toDomain(repository.findByKeyAndTypeAndAccountancy_key(groupKey, groupType.name(), accountancyKey));
     }
 

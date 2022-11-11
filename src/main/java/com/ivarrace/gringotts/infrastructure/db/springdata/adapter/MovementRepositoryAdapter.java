@@ -1,6 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 
-import com.ivarrace.gringotts.application.repository.MovementRepositoryPort;
+import com.ivarrace.gringotts.application.ports.data.MovementRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
 import com.ivarrace.gringotts.domain.user.User;

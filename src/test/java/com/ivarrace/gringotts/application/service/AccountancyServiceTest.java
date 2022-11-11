@@ -1,19 +1,18 @@
 package com.ivarrace.gringotts.application.service;
 
 import com.ivarrace.gringotts.TestUtils;
-import com.ivarrace.gringotts.application.exception.ObjectAlreadyRegisteredException;
-import com.ivarrace.gringotts.application.exception.ObjectNotFoundException;
-import com.ivarrace.gringotts.application.ports.AuthPort;
-import com.ivarrace.gringotts.application.repository.AccountancyRepositoryPort;
+import com.ivarrace.gringotts.application.ports.data.AccountancyRepositoryPort;
+import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType;
+import com.ivarrace.gringotts.domain.exception.ObjectAlreadyRegisteredException;
+import com.ivarrace.gringotts.domain.exception.ObjectNotFoundException;
 import com.ivarrace.gringotts.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,9 +32,7 @@ class AccountancyServiceTest {
     public void init() {
         accountancyRepositoryPortMock = mock(AccountancyRepositoryPort.class);
         authPortMock = mock(AuthPort.class);
-        accountancyService =
-                new AccountancyService(accountancyRepositoryPortMock,
-                        authPortMock);
+        accountancyService = new AccountancyService(accountancyRepositoryPortMock, authPortMock);
         when(authPortMock.getCurrentUser()).thenReturn(MOCK_USER);
     }
 
@@ -49,26 +46,17 @@ class AccountancyServiceTest {
     @Test
     void findByKey() {
         Accountancy accountancy = TestUtils.fakerAccountancy();
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(),
-                MOCK_USER)).thenReturn(Optional.of(accountancy));
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(), MOCK_USER)).thenReturn(Optional.of(accountancy));
         Accountancy result = accountancyService.findByKey(accountancy.getKey());
         assertNotNull(result);
-        assertAll("Expected values",
-                () -> assertEquals(accountancy.getId(), result.getId()),
+        assertAll("Expected values", () -> assertEquals(accountancy.getId(), result.getId()),
                 () -> assertEquals(accountancy.getKey(), result.getKey()),
-                () -> assertEquals(accountancy.getCreatedDate(),
-                        result.getCreatedDate()),
-                () -> assertEquals(accountancy.getLastModified(),
-                        result.getLastModified()),
+                () -> assertEquals(accountancy.getCreatedDate(), result.getCreatedDate()),
+                () -> assertEquals(accountancy.getLastModified(), result.getLastModified()),
                 () -> assertEquals(accountancy.getName(), result.getName()),
-                () -> assertEquals(
-                        accountancy.getIncomes().size(),
-                        result.getIncomes().size()),
-                () -> assertEquals(
-                        accountancy.getExpenses().size(),
-                        result.getExpenses().size()),
-                () -> assertTrue(result.getUsers().isEmpty())
-        );
+                () -> assertEquals(accountancy.getIncomes().size(), result.getIncomes().size()),
+                () -> assertEquals(accountancy.getExpenses().size(), result.getExpenses().size()),
+                () -> assertTrue(result.getUsers().isEmpty()));
         verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancy.getKey(), MOCK_USER);
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
     }
@@ -76,10 +64,8 @@ class AccountancyServiceTest {
     @Test
     void findByKey_notFound() {
         String accountancyKey = "test";
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey,
-                MOCK_USER)).thenReturn(Optional.empty());
-        ObjectNotFoundException thrown =
-                assertThrows(ObjectNotFoundException.class, () -> {
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey, MOCK_USER)).thenReturn(Optional.empty());
+        ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
             accountancyService.findByKey(accountancyKey);
         });
         assertTrue(thrown.getMessage().contains(accountancyKey));
@@ -90,16 +76,13 @@ class AccountancyServiceTest {
     @Test
     void create() {
         Accountancy accountancy = TestUtils.fakerAccountancy();
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(),
-                MOCK_USER)).thenReturn(Optional.empty());
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(), MOCK_USER)).thenReturn(Optional.empty());
         when(accountancyRepositoryPortMock.save(accountancy)).thenReturn(accountancy);
         Accountancy result = accountancyService.create(accountancy);
         assertNotNull(result);
         assertEquals(1, result.getUsers().size());
-        assertAll("Default user values on create",
-                () -> assertEquals(AccountancyUserRoleType.OWNER , result.getUsers().get(0).getRole()),
-                () -> assertEquals(MOCK_USER, result.getUsers().get(0).getUser())
-        );
+        assertAll("Default user values on create", () -> assertEquals(AccountancyUserRoleType.OWNER,
+                result.getUsers().get(0).getRole()), () -> assertEquals(MOCK_USER, result.getUsers().get(0).getUser()));
         verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancy.getKey(), MOCK_USER);
         verify(accountancyRepositoryPortMock, times(1)).save(accountancy);
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
@@ -108,10 +91,8 @@ class AccountancyServiceTest {
     @Test
     void create_alreadyExists() {
         Accountancy accountancy = TestUtils.fakerAccountancy();
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(),
-                MOCK_USER)).thenReturn(Optional.of(accountancy));
-        ObjectAlreadyRegisteredException thrown =
-                assertThrows(ObjectAlreadyRegisteredException.class, () -> {
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancy.getKey(), MOCK_USER)).thenReturn(Optional.of(accountancy));
+        ObjectAlreadyRegisteredException thrown = assertThrows(ObjectAlreadyRegisteredException.class, () -> {
             accountancyService.create(accountancy);
         });
         assertTrue(thrown.getMessage().contains(accountancy.getKey()));
@@ -123,8 +104,7 @@ class AccountancyServiceTest {
     void modifyByKey() {
         Accountancy existing = TestUtils.fakerAccountancy();
         Accountancy modified = TestUtils.fakerAccountancy();
-        when(accountancyRepositoryPortMock.findByKeyAndUser(existing.getKey(),
-                MOCK_USER)).thenReturn(Optional.of(existing));
+        when(accountancyRepositoryPortMock.findByKeyAndUser(existing.getKey(), MOCK_USER)).thenReturn(Optional.of(existing));
         when(accountancyRepositoryPortMock.save(modified)).thenReturn(modified);
         Accountancy result = accountancyService.modifyByKey(existing.getKey(), modified);
         assertNotNull(result);
@@ -138,10 +118,8 @@ class AccountancyServiceTest {
         String accountancyKey = "test";
         Accountancy accountancy = new Accountancy();
         accountancy.setKey(accountancyKey);
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey,
-                MOCK_USER)).thenReturn(Optional.empty());
-        ObjectNotFoundException thrown =
-                assertThrows(ObjectNotFoundException.class, () -> {
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey, MOCK_USER)).thenReturn(Optional.empty());
+        ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
             accountancyService.modifyByKey(accountancyKey, accountancy);
         });
         assertTrue(thrown.getMessage().contains(accountancyKey));
@@ -154,8 +132,7 @@ class AccountancyServiceTest {
         String accountancyKey = "test";
         Accountancy accountancy = new Accountancy();
         accountancy.setKey(accountancyKey);
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey,
-                MOCK_USER)).thenReturn(Optional.of(accountancy));
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey, MOCK_USER)).thenReturn(Optional.of(accountancy));
         accountancyService.deleteByKey(accountancyKey);
         verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancyKey, MOCK_USER);
         verify(accountancyRepositoryPortMock, times(1)).delete(accountancy);
@@ -165,10 +142,8 @@ class AccountancyServiceTest {
     @Test
     void deleteByKey_notFound() {
         String accountancyKey = "test";
-        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey,
-                MOCK_USER)).thenReturn(Optional.empty());
-        ObjectNotFoundException thrown =
-                assertThrows(ObjectNotFoundException.class, () -> {
+        when(accountancyRepositoryPortMock.findByKeyAndUser(accountancyKey, MOCK_USER)).thenReturn(Optional.empty());
+        ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
             accountancyService.deleteByKey(accountancyKey);
         });
         assertTrue(thrown.getMessage().contains(accountancyKey));

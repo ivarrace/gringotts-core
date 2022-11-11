@@ -1,12 +1,12 @@
 package com.ivarrace.gringotts.application.service;
 
 import com.ivarrace.gringotts.TestUtils;
-import com.ivarrace.gringotts.application.exception.InsufficientPrivilegesException;
-import com.ivarrace.gringotts.application.exception.ObjectNotFoundException;
-import com.ivarrace.gringotts.application.ports.AuthPort;
+import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRole;
 import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType;
+import com.ivarrace.gringotts.domain.exception.InsufficientPrivilegesException;
+import com.ivarrace.gringotts.domain.exception.ObjectNotFoundException;
 import com.ivarrace.gringotts.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -32,9 +32,7 @@ class AccountancyUserRoleCheckerTest {
     public void init() {
         accountancyServiceMock = mock(AccountancyService.class);
         authPortMock = mock(AuthPort.class);
-        accountancyUserRoleChecker =
-                new AccountancyUserRoleChecker(accountancyServiceMock,
-                        authPortMock);
+        accountancyUserRoleChecker = new AccountancyUserRoleChecker(accountancyServiceMock, authPortMock);
     }
 
     @Test
@@ -48,9 +46,7 @@ class AccountancyUserRoleCheckerTest {
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
-        boolean result =
-                accountancyUserRoleChecker.hasPermission(accountancy.getKey()
-                        , AccountancyUserRoleType.VIEWER);
+        boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.VIEWER);
         assertTrue(result);
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
@@ -68,10 +64,8 @@ class AccountancyUserRoleCheckerTest {
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
         String accountancyKey = accountancy.getKey();
-        InsufficientPrivilegesException thrown =
-                assertThrows(InsufficientPrivilegesException.class, () -> {
-            accountancyUserRoleChecker.hasPermission(accountancyKey,
-                    AccountancyUserRoleType.EDITOR);
+        InsufficientPrivilegesException thrown = assertThrows(InsufficientPrivilegesException.class, () -> {
+            accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.EDITOR);
         });
         assertTrue(thrown.getMessage().contains(AccountancyUserRoleType.EDITOR.name()));
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
@@ -90,10 +84,8 @@ class AccountancyUserRoleCheckerTest {
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
         String accountancyKey = accountancy.getKey();
-        InsufficientPrivilegesException thrown =
-                assertThrows(InsufficientPrivilegesException.class, () -> {
-            accountancyUserRoleChecker.hasPermission(accountancyKey,
-                    AccountancyUserRoleType.OWNER);
+        InsufficientPrivilegesException thrown = assertThrows(InsufficientPrivilegesException.class, () -> {
+            accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.OWNER);
         });
         assertTrue(thrown.getMessage().contains(AccountancyUserRoleType.OWNER.name()));
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
@@ -111,9 +103,7 @@ class AccountancyUserRoleCheckerTest {
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
-        boolean result =
-                accountancyUserRoleChecker.hasPermission(accountancy.getKey()
-                        , AccountancyUserRoleType.VIEWER);
+        boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.VIEWER);
         assertTrue(result);
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
@@ -130,9 +120,7 @@ class AccountancyUserRoleCheckerTest {
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
-        boolean result =
-                accountancyUserRoleChecker.hasPermission(accountancy.getKey()
-                        , AccountancyUserRoleType.EDITOR);
+        boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.EDITOR);
         assertTrue(result);
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
@@ -150,10 +138,8 @@ class AccountancyUserRoleCheckerTest {
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
         String accountancyKey = accountancy.getKey();
-        InsufficientPrivilegesException thrown =
-                assertThrows(InsufficientPrivilegesException.class, () -> {
-            accountancyUserRoleChecker.hasPermission(accountancyKey,
-                    AccountancyUserRoleType.OWNER);
+        InsufficientPrivilegesException thrown = assertThrows(InsufficientPrivilegesException.class, () -> {
+            accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.OWNER);
         });
         assertTrue(thrown.getMessage().contains(AccountancyUserRoleType.OWNER.name()));
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
@@ -171,9 +157,7 @@ class AccountancyUserRoleCheckerTest {
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
-        boolean result =
-                accountancyUserRoleChecker.hasPermission(accountancy.getKey()
-                        , AccountancyUserRoleType.VIEWER);
+        boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.VIEWER);
         assertTrue(result);
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
@@ -190,9 +174,7 @@ class AccountancyUserRoleCheckerTest {
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
-        boolean result =
-                accountancyUserRoleChecker.hasPermission(accountancy.getKey()
-                        , AccountancyUserRoleType.EDITOR);
+        boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.EDITOR);
         assertTrue(result);
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
@@ -209,9 +191,7 @@ class AccountancyUserRoleCheckerTest {
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
-        boolean result =
-                accountancyUserRoleChecker.hasPermission(accountancy.getKey()
-                        , AccountancyUserRoleType.OWNER);
+        boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.OWNER);
         assertTrue(result);
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
@@ -229,10 +209,8 @@ class AccountancyUserRoleCheckerTest {
         when(authPortMock.getCurrentUser()).thenReturn(user);
         when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
         String accountancyKey = accountancy.getKey();
-        ObjectNotFoundException thrown =
-                assertThrows(ObjectNotFoundException.class, () -> {
-            accountancyUserRoleChecker.hasPermission(accountancyKey,
-                    AccountancyUserRoleType.OWNER);
+        ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+            accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.OWNER);
         });
         assertTrue(thrown.getMessage().contains(accountancy.getKey()));
         verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());

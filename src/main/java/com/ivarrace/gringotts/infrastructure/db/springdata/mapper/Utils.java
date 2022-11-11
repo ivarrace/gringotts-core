@@ -1,6 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.mapper;
 
-import com.ivarrace.gringotts.application.exception.InvalidParameterException;
+import com.ivarrace.gringotts.domain.exception.InvalidParameterException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +14,7 @@ public class Utils {
         try {
             return UUID.fromString(id);
         } catch (IllegalArgumentException illegalArgumentException) {
-            throw new InvalidParameterException("id");
+            throw new InvalidParameterException("id", id);
         }
     }
 

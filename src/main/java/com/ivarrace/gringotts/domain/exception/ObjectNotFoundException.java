@@ -1,9 +1,9 @@
-package com.ivarrace.gringotts.application.exception;
+package com.ivarrace.gringotts.domain.exception;
 
 public class ObjectNotFoundException extends RuntimeException {
 
     public ObjectNotFoundException(String id) {
-        super("Object " + id + " not found.");
+        super(String.format("Object [%s] not found", id));
     }
 
 }

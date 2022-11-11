@@ -1,10 +1,8 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 
 import com.ivarrace.gringotts.TestUtils;
-import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
-import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.AccountancyEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.GroupEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,35 +34,39 @@ class GroupRepositoryAdapterTest {
     @Test
     void findAllByTypeInAccountancy() {
         GroupEntity entityExample = TestUtils.fakerGroupEntity();
-        when(springDataRepositoryMock.findAllByTypeAndAccountancy_key(entityExample.getType(), entityExample.getAccountancy().getKey()))
-                .thenReturn(Collections.singletonList(entityExample));
-        List<Group> result = repositoryAdapter.findAllByTypeInAccountancy(GroupType.valueOf(entityExample.getType()), entityExample.getAccountancy().getKey());
+        when(springDataRepositoryMock.findAllByTypeAndAccountancy_key(entityExample.getType(),
+                entityExample.getAccountancy().getKey())).thenReturn(Collections.singletonList(entityExample));
+        List<Group> result = repositoryAdapter.findAllByTypeAndAccountancy(GroupType.valueOf(entityExample.getType())
+                , entityExample.getAccountancy().getKey());
         assertEquals(1, result.size());
-        verify(springDataRepositoryMock, times(1)).findAllByTypeAndAccountancy_key(entityExample.getType(), entityExample.getAccountancy().getKey());
+        verify(springDataRepositoryMock, times(1)).findAllByTypeAndAccountancy_key(entityExample.getType(),
+                entityExample.getAccountancy().getKey());
         verifyNoMoreInteractions(springDataRepositoryMock);
     }
 
     @Test
     void findByKeyAndTypeInAccountancy_empty() {
         GroupEntity entityExample = TestUtils.fakerGroupEntity();
-        when(springDataRepositoryMock.findByKeyAndTypeAndAccountancy_key(entityExample.getKey(), entityExample.getType(), entityExample.getAccountancy().getKey()))
-                .thenReturn(Optional.empty());
-        Optional<Group> result =
-                repositoryAdapter.findByKeyAndTypeInAccountancy(entityExample.getKey(), GroupType.valueOf(entityExample.getType()), entityExample.getAccountancy().getKey());
+        when(springDataRepositoryMock.findByKeyAndTypeAndAccountancy_key(entityExample.getKey(),
+                entityExample.getType(), entityExample.getAccountancy().getKey())).thenReturn(Optional.empty());
+        Optional<Group> result = repositoryAdapter.findByKeyAndTypeAndAccountancy(entityExample.getKey(),
+                GroupType.valueOf(entityExample.getType()), entityExample.getAccountancy().getKey());
         assertTrue(result.isEmpty());
-        verify(springDataRepositoryMock, times(1)).findByKeyAndTypeAndAccountancy_key(entityExample.getKey(), entityExample.getType(), entityExample.getAccountancy().getKey());
+        verify(springDataRepositoryMock, times(1)).findByKeyAndTypeAndAccountancy_key(entityExample.getKey(),
+                entityExample.getType(), entityExample.getAccountancy().getKey());
         verifyNoMoreInteractions(springDataRepositoryMock);
     }
 
     @Test
     void findByKeyAndTypeInAccountancy() {
         GroupEntity entityExample = TestUtils.fakerGroupEntity();
-        when(springDataRepositoryMock.findByKeyAndTypeAndAccountancy_key(entityExample.getKey(), entityExample.getType(), entityExample.getAccountancy().getKey()))
-                .thenReturn(Optional.of(entityExample));
-        Optional<Group> result =
-                repositoryAdapter.findByKeyAndTypeInAccountancy(entityExample.getKey(), GroupType.valueOf(entityExample.getType()), entityExample.getAccountancy().getKey());
+        when(springDataRepositoryMock.findByKeyAndTypeAndAccountancy_key(entityExample.getKey(),
+                entityExample.getType(), entityExample.getAccountancy().getKey())).thenReturn(Optional.of(entityExample));
+        Optional<Group> result = repositoryAdapter.findByKeyAndTypeAndAccountancy(entityExample.getKey(),
+                GroupType.valueOf(entityExample.getType()), entityExample.getAccountancy().getKey());
         assertTrue(result.isPresent());
-        verify(springDataRepositoryMock, times(1)).findByKeyAndTypeAndAccountancy_key(entityExample.getKey(), entityExample.getType(), entityExample.getAccountancy().getKey());
+        verify(springDataRepositoryMock, times(1)).findByKeyAndTypeAndAccountancy_key(entityExample.getKey(),
+                entityExample.getType(), entityExample.getAccountancy().getKey());
         verifyNoMoreInteractions(springDataRepositoryMock);
     }
 

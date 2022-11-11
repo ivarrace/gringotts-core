@@ -1,6 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.security.spring.adapter;
 
-import com.ivarrace.gringotts.application.ports.AuthPort;
+import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.infrastructure.security.spring.model.SpringUser;
 import com.ivarrace.gringotts.infrastructure.security.spring.model.SpringUserMapper;

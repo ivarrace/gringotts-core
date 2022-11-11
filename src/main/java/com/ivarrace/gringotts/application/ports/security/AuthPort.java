@@ -1,4 +1,4 @@
-package com.ivarrace.gringotts.application.ports;
+package com.ivarrace.gringotts.application.ports.security;
 
 import com.ivarrace.gringotts.domain.user.User;
 

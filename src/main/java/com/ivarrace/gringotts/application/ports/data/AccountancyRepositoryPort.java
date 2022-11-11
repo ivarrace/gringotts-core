@@ -1,4 +1,4 @@
-package com.ivarrace.gringotts.application.repository;
+package com.ivarrace.gringotts.application.ports.data;
 
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.user.User;
@@ -8,11 +8,11 @@ import java.util.Optional;
 
 public interface AccountancyRepositoryPort {
 
-    Accountancy save(Accountancy accountancy);
-
-    void delete(Accountancy accountancy);
-
     List<Accountancy> findAllByUser(User currentUser);
 
     Optional<Accountancy> findByKeyAndUser(String accountancyKey, User currentUser);
+
+    Accountancy save(Accountancy accountancy);
+
+    void delete(Accountancy accountancy);
 }
