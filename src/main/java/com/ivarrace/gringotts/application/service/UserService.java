@@ -1,7 +1,6 @@
 package com.ivarrace.gringotts.application.service;
 
 import com.ivarrace.gringotts.application.ports.data.UserRepositoryPort;
-import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
 
