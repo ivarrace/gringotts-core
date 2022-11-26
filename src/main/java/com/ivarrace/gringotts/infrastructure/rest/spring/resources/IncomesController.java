@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController()
 @RequiredArgsConstructor
-@RequestMapping("/accountancy/{accountancyKey}/incomes")
+@RequestMapping("/api/accountancy/{accountancyKey}/incomes")
 public class IncomesController {
 
     private final GroupService groupService;

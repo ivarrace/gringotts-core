@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 
 public class AuthResponse {
 
-    private String accessToken;
+    private String token;
     private LocalDateTime expiresAt;
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getToken() {
+        return token;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public LocalDateTime getExpiresAt() {

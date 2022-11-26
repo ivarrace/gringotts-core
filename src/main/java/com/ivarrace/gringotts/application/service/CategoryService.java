@@ -30,20 +30,16 @@ public class CategoryService {
         return categoryRepositoryPort.findByKeyAndGroup(categoryKey, groupKey, groupType, accountancyKey).orElseThrow(() -> new ObjectNotFoundException(categoryKey));
     }
 
-    public Category create(Category category) {
-        Optional<Category> existing = categoryRepositoryPort.findByKeyAndGroup(category.getKey(),
-                category.getGroup().getKey(), category.getGroup().getType(),
-                category.getGroup().getAccountancy().getKey());
-        if (existing.isPresent()) {
-            throw new ObjectAlreadyRegisteredException(category.getKey());
-        }
+    public Category create(Category category) throws ObjectAlreadyRegisteredException{
+        validateIfExists(category);
         Group group = groupService.findByKey(category.getGroup().getKey(),
                 category.getGroup().getAccountancy().getKey(), category.getGroup().getType());
         category.setGroup(group);
         return categoryRepositoryPort.save(category);
     }
 
-    public Category modify(String categoryKey, Category category) throws ObjectNotFoundException {
+    public Category modify(String categoryKey, Category category) throws ObjectNotFoundException, ObjectAlreadyRegisteredException {
+        validateIfExists(category);
         Category existing = this.findByKeyInGroup(categoryKey, category.getGroup().getKey(),
                 category.getGroup().getType(), category.getGroup().getAccountancy().getKey());
         category.setId(existing.getId());
@@ -54,5 +50,13 @@ public class CategoryService {
     public void delete(String categoryKey, String groupKey, GroupType groupType, String accountancyKey) throws ObjectNotFoundException {
         Category existing = this.findByKeyInGroup(categoryKey, groupKey, groupType, accountancyKey);
         categoryRepositoryPort.delete(existing);
+    }
+
+    private void validateIfExists(Category category) throws ObjectAlreadyRegisteredException{
+        Optional<Category> persistedCategory = categoryRepositoryPort.findByKeyAndGroup(category.getKey(),
+                category.getGroup().getKey(), category.getGroup().getType(),category.getGroup().getAccountancy().getKey());
+        if (persistedCategory.isPresent()) {
+            throw new ObjectAlreadyRegisteredException(persistedCategory.get().getKey());
+        }
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController()
 @RequiredArgsConstructor
-@RequestMapping("/accountancy")
+@RequestMapping("/api/accountancy")
 public class AccountancyController {
 
     private final AccountancyService accountancyServer;

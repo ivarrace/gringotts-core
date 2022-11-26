@@ -26,12 +26,8 @@ public class GroupService {
         return groupRepositoryPort.findAllByTypeAndAccountancy(groupType, accountancyKey);
     }
 
-    public Group create(Group group) {
-        Optional<Group> existing = groupRepositoryPort.findByKeyAndTypeAndAccountancy(group.getKey(), group.getType()
-                , group.getAccountancy().getKey());
-        if (existing.isPresent()) {
-            throw new ObjectAlreadyRegisteredException(group.getKey());
-        }
+    public Group create(Group group) throws ObjectAlreadyRegisteredException {
+        validateIfExists(group);
         Accountancy accountancy = accountancyService.findByKey(group.getAccountancy().getKey());
         group.setAccountancy(accountancy);
         return groupRepositoryPort.save(group);
@@ -41,7 +37,8 @@ public class GroupService {
         return groupRepositoryPort.findByKeyAndTypeAndAccountancy(groupKey, groupType, accountancyKey).orElseThrow(() -> new ObjectNotFoundException(groupKey));
     }
 
-    public Group modify(String groupKey, Group group) throws ObjectNotFoundException {
+    public Group modify(String groupKey, Group group) throws ObjectNotFoundException, ObjectAlreadyRegisteredException {
+        validateIfExists(group);
         Group existing = this.findByKey(groupKey, group.getAccountancy().getKey(), group.getType());
         group.setId(existing.getId());
         group.setAccountancy(existing.getAccountancy());
@@ -51,5 +48,12 @@ public class GroupService {
     public void delete(String accountancyKey, String groupKey, GroupType groupType) throws ObjectNotFoundException {
         Group existing = this.findByKey(groupKey, accountancyKey, groupType);
         groupRepositoryPort.delete(existing);
+    }
+
+    private void validateIfExists(Group group) throws ObjectAlreadyRegisteredException{
+        Optional<Group> updatedGroup = groupRepositoryPort.findByKeyAndTypeAndAccountancy(group.getKey(), group.getType(), group.getAccountancy().getKey());
+        if (updatedGroup.isPresent()) {
+            throw new ObjectAlreadyRegisteredException(group.getKey());
+        }
     }
 }

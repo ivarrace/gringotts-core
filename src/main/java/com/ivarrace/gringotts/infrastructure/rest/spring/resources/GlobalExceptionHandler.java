@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = ObjectAlreadyRegisteredException.class)
     public ResponseEntity<ErrorResponse> objectAlreadyRegisteredException(ObjectAlreadyRegisteredException exception,
                                                                           final HttpServletRequest httpServletRequest) {
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
         ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
         return new ResponseEntity<>(errorResponse, httpStatus);
     }

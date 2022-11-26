@@ -31,12 +31,8 @@ public class AccountancyService {
         return accountancyRepositoryPort.findByKeyAndUser(accountancyKey, authPort.getCurrentUser()).orElseThrow(() -> new ObjectNotFoundException(accountancyKey));
     }
 
-    public Accountancy create(Accountancy accountancy) {
-        Optional<Accountancy> existing = accountancyRepositoryPort.findByKeyAndUser(accountancy.getKey(),
-                authPort.getCurrentUser());
-        if (existing.isPresent()) {
-            throw new ObjectAlreadyRegisteredException(accountancy.getKey());
-        }
+    public Accountancy create(Accountancy accountancy) throws ObjectAlreadyRegisteredException{
+        validateIfExists(accountancy);
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(authPort.getCurrentUser());
         userRole.setRole(AccountancyUserRoleType.OWNER);
@@ -44,7 +40,8 @@ public class AccountancyService {
         return accountancyRepositoryPort.save(accountancy);
     }
 
-    public Accountancy modifyByKey(String accountancyKey, Accountancy accountancy) throws ObjectNotFoundException {
+    public Accountancy modifyByKey(String accountancyKey, Accountancy accountancy) throws ObjectNotFoundException, ObjectAlreadyRegisteredException {
+        validateIfExists(accountancy);
         Accountancy existing = this.findByKey(accountancyKey);
         accountancy.setId(existing.getId());
         accountancy.setUsers(existing.getUsers());
@@ -54,5 +51,13 @@ public class AccountancyService {
     public void deleteByKey(String accountancyKey) {
         Accountancy existing = this.findByKey(accountancyKey);
         accountancyRepositoryPort.delete(existing);
+    }
+
+    private void validateIfExists(Accountancy accountancy) throws ObjectAlreadyRegisteredException {
+        Optional<Accountancy> persistedAccountancy = accountancyRepositoryPort.findByKeyAndUser(accountancy.getKey(),
+                authPort.getCurrentUser());
+        if (persistedAccountancy.isPresent()) {
+            throw new ObjectAlreadyRegisteredException(accountancy.getKey());
+        }
     }
 }

@@ -26,7 +26,7 @@ public class AuthHandler {
         SpringUser springUser = (SpringUser) authenticate.getPrincipal();
         AuthResponse response = new AuthResponse();
         String token = jwtTokenUtil.generateAccessToken(springUser);
-        response.setAccessToken("Bearer " + token);
+        response.setToken(token);
         response.setExpiresAt(jwtTokenUtil.getExpirationDate(token));
         return response;
     }
