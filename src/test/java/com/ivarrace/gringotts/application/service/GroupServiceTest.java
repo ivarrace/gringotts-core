@@ -146,6 +146,8 @@ class GroupServiceTest {
         assertNotNull(result);
         verify(groupRepositoryMock, times(1)).findByKeyAndTypeAndAccountancy(existing.getKey(), modified.getType(),
                 modified.getAccountancy().getKey());
+        verify(groupRepositoryMock, times(1)).findByKeyAndTypeAndAccountancy(modified.getKey(), modified.getType(),
+                modified.getAccountancy().getKey());
         verify(groupRepositoryMock, times(1)).save(modified);
         verifyNoMoreInteractions(groupRepositoryMock, accountancyServiceMock);
     }
@@ -164,6 +166,8 @@ class GroupServiceTest {
         });
         assertTrue(thrown.getMessage().contains(existing.getKey()));
         verify(groupRepositoryMock, times(1)).findByKeyAndTypeAndAccountancy(existing.getKey(), modified.getType(),
+                modified.getAccountancy().getKey());
+        verify(groupRepositoryMock, times(1)).findByKeyAndTypeAndAccountancy(modified.getKey(), modified.getType(),
                 modified.getAccountancy().getKey());
         verifyNoMoreInteractions(groupRepositoryMock, accountancyServiceMock);
     }

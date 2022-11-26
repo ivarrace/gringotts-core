@@ -109,6 +109,7 @@ class AccountancyServiceTest {
         Accountancy result = accountancyService.modifyByKey(existing.getKey(), modified);
         assertNotNull(result);
         verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(existing.getKey(), MOCK_USER);
+        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(modified.getKey(), MOCK_USER);
         verify(accountancyRepositoryPortMock, times(1)).save(modified);
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
     }
@@ -123,7 +124,7 @@ class AccountancyServiceTest {
             accountancyService.modifyByKey(accountancyKey, accountancy);
         });
         assertTrue(thrown.getMessage().contains(accountancyKey));
-        verify(accountancyRepositoryPortMock, times(1)).findByKeyAndUser(accountancyKey, MOCK_USER);
+        verify(accountancyRepositoryPortMock, times(2)).findByKeyAndUser(accountancyKey, MOCK_USER);
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
     }
 
