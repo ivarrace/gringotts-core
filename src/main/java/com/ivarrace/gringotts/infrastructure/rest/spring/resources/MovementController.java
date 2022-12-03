@@ -11,11 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController()
 @RequiredArgsConstructor
-@RequestMapping("/movements")
+@RequestMapping("/api/movements")
 public class MovementController {
 
     private final MovementService movementService;
@@ -24,14 +25,16 @@ public class MovementController {
     public ResponseEntity<List<MovementResponse>> getAllMovements(@RequestParam(required = false) String accountancyKey,
                                                                   @RequestParam(required = false) String groupKey,
                                                                   @RequestParam(required = false) GroupType groupType,
-                                                                  @RequestParam(required = false) String categoryKey) {
+                                                                  @RequestParam(required = false) String categoryKey,
+                                                                  @RequestParam(required = false) Integer monthOrdinal,
+                                                                  @RequestParam(required = false) Integer year) {
         //TODO pageable
-        List<MovementResponse> response = MovementMapper.INSTANCE.toResponse(movementService.findAll(accountancyKey,groupKey, groupType,categoryKey));
+        List<MovementResponse> response = MovementMapper.INSTANCE.toResponse(movementService.findAll(accountancyKey,groupKey, groupType, categoryKey, monthOrdinal, year));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<MovementResponse> save(@RequestBody NewMovementCommand command) {
+    public ResponseEntity<MovementResponse> save(@Valid @RequestBody NewMovementCommand command) {
         MovementResponse response =
                 MovementMapper.INSTANCE.toResponse(movementService.create(MovementMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);

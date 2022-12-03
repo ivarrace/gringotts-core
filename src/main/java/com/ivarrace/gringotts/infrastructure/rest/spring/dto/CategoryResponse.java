@@ -13,5 +13,6 @@ public class CategoryResponse {
     private String name;
     private LocalDateTime createdDate;
     private LocalDateTime lastModified;
+    private AnnualSummary summary;
 
 }

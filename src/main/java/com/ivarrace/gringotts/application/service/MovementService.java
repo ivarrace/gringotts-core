@@ -6,7 +6,6 @@ import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType;
 import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
-import com.ivarrace.gringotts.domain.exception.InvalidParameterException;
 import com.ivarrace.gringotts.domain.exception.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,21 +30,9 @@ public class MovementService {
         this.accountancyUserRoleChecker = accountancyUserRoleChecker;
     }
 
-    public List<Movement> findAll(String accountancyKey, String groupKey, GroupType groupType, String categoryKey) {
-        if (categoryKey != null) {
-            return movementRepositoryPort.findAllByCategory(categoryKey, authPort.getCurrentUser());
-        } else if (groupKey != null) {
-            if (groupType == null) {
-                throw new InvalidParameterException("groupType", "empty");
-            }
-            return movementRepositoryPort.findAllByGroup(groupKey, groupType, authPort.getCurrentUser());
-        } else if (groupType != null) {
-            return movementRepositoryPort.findAllByGroupType(groupType, authPort.getCurrentUser());
-        } else if (accountancyKey != null) {
-            return movementRepositoryPort.findAllByAccountancy(accountancyKey, authPort.getCurrentUser());
-        } else {
-            return movementRepositoryPort.findAllByUser(authPort.getCurrentUser());
-        }
+    public List<Movement> findAll(String accountancyKey, String groupKey, GroupType groupType, String categoryKey, Integer monthOrdinal, Integer year) {
+        return movementRepositoryPort.findAll(
+                accountancyKey, groupType, groupKey, categoryKey, monthOrdinal, year, authPort.getCurrentUser());
     }
 
     public Movement findById(String movementId) {

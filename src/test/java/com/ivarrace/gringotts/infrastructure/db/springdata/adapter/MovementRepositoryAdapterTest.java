@@ -36,17 +36,6 @@ class MovementRepositoryAdapterTest {
     }
 
     @Test
-    void findAllByCategory() { //TODO test find all by
-        MovementEntity entityExample = TestUtils.fakerMovementEntity();
-        when(springDataRepositoryMock.findAllByCategory_keyAndCategory_Group_Accountancy_Users_UserId(entityExample.getCategory().getKey(), CURRENT_USER_UUID))
-                .thenReturn(Collections.singletonList(entityExample));
-        List<Movement> result = repositoryAdapter.findAllByCategory(entityExample.getCategory().getKey(), CURRENT_USER);
-        assertEquals(1, result.size());
-        verify(springDataRepositoryMock, times(1)).findAllByCategory_keyAndCategory_Group_Accountancy_Users_UserId(entityExample.getCategory().getKey(), CURRENT_USER_UUID);
-        verifyNoMoreInteractions(springDataRepositoryMock);
-    }
-
-    @Test
     void findById_empty() {
         MovementEntity entityExample = TestUtils.fakerMovementEntity();
         when(springDataRepositoryMock.findById(entityExample.getId()))

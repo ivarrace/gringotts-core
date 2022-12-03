@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController()
@@ -34,7 +35,7 @@ public class IncomesController {
 
     @PostMapping("/")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
-    public ResponseEntity<GroupResponse> save(@PathVariable String accountancyKey, @RequestBody NewGroupCommand command) {
+    public ResponseEntity<GroupResponse> save(@PathVariable String accountancyKey, @Valid @RequestBody NewGroupCommand command) {
         GroupResponse response =
                 GroupMapper.INSTANCE.toResponse(groupService.create(GroupMapper.INSTANCE.toDomain(command, GroupType.INCOMES, accountancyKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -51,7 +52,7 @@ public class IncomesController {
     @PutMapping("/{groupKey}")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
     public ResponseEntity<GroupResponse> modify(@PathVariable String accountancyKey, @PathVariable String groupKey,
-                                                @RequestBody NewGroupCommand command) {
+                                                @Valid @RequestBody NewGroupCommand command) {
         GroupResponse response =
                 GroupMapper.INSTANCE.toResponse(
                         groupService.modify(groupKey,
@@ -78,7 +79,7 @@ public class IncomesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
     public ResponseEntity<CategoryResponse> saveCategory(@PathVariable String accountancyKey,
                                                          @PathVariable String groupKey,
-                                                         @RequestBody NewCategoryCommand command) {
+                                                         @Valid @RequestBody NewCategoryCommand command) {
         CategoryResponse response =
                 CategoryMapper.INSTANCE.toResponse(categoryService.create(CategoryMapper.INSTANCE.toDomain(command, groupKey, GroupType.INCOMES, accountancyKey)));
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -97,7 +98,7 @@ public class IncomesController {
     public ResponseEntity<CategoryResponse> modifyCategory(@PathVariable String accountancyKey,
                                                            @PathVariable String groupKey,
                                                            @PathVariable String categoryKey,
-                                                           @RequestBody NewCategoryCommand command) {
+                                                           @Valid @RequestBody NewCategoryCommand command) {
         CategoryResponse response =
                 CategoryMapper.INSTANCE.toResponse(
                         categoryService.modify(categoryKey, CategoryMapper.INSTANCE.toDomain(command, groupKey, GroupType.INCOMES, accountancyKey)));

@@ -2,15 +2,18 @@ package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.domain.exception.*;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.ErrorResponse;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -76,6 +79,17 @@ public class GlobalExceptionHandler {
                                                                         final HttpServletRequest httpServletRequest) {
         HttpStatus httpStatus = HttpStatus.CONFLICT;
         ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), httpStatus, httpServletRequest);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException exception,
+                                                                        final HttpServletRequest httpServletRequest) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        String errors = exception.getFieldErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+        ErrorResponse errorResponse = new ErrorResponse(errors, httpStatus, httpServletRequest);
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,7 +18,7 @@ public class MovementEntity extends BaseEntity {
     private LocalDate date;
 
     @Column(nullable = false)
-    private double amount;
+    private BigDecimal amount;
 
     private String info;
 

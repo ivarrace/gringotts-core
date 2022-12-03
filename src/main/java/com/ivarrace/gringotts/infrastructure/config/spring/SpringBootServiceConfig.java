@@ -51,4 +51,5 @@ public class SpringBootServiceConfig {
     public ReportService reportService(MovementService movementService) {
         return new ReportService(movementService);
     }
+
 }

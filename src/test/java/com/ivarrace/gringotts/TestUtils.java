@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -85,7 +86,7 @@ public class TestUtils {
         MovementEntity entity = new MovementEntity();
         entity.setId(UUID.randomUUID());
         entity.setDate(LocalDate.ofInstant(faker.date().birthday().toInstant(), ZoneId.systemDefault()));
-        entity.setAmount(faker.number().randomDouble(2,0, 1000));
+        entity.setAmount(new BigDecimal(faker.number().randomDouble(2,0, 1000)));
         entity.setInfo(faker.harryPotter().spell());
         entity.setCategory(fakerCategoryEntity());
         return entity;
