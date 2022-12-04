@@ -2,8 +2,8 @@ package com.ivarrace.gringotts.infrastructure.rest.spring.mapper;
 
 import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.CategoryResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewCategoryCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.CategoryResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewCategoryCommand;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

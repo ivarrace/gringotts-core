@@ -1,9 +1,9 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.mapper;
 
 import com.ivarrace.gringotts.domain.accountancy.Movement;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.MovementResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewMovementCommand;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.UpdateMovementCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.MovementResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewMovementCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.UpdateMovementCommand;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface AccountancyRepositoryPort {
 
-    List<Accountancy> findAllByUser(User currentUser);
+    List<Accountancy> findAll(User currentUser);
 
-    Optional<Accountancy> findByKeyAndUser(String accountancyKey, User currentUser);
+    Optional<Accountancy> findOne(User currentUser, String accountancyKey);
 
     Accountancy save(Accountancy accountancy);
 

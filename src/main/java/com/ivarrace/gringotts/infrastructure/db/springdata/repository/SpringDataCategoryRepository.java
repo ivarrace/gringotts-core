@@ -1,18 +1,13 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.repository;
 
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.CategoryEntity;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface SpringDataCategoryRepository extends JpaRepository<CategoryEntity, UUID> {
+public interface SpringDataCategoryRepository extends JpaRepository<CategoryEntity, UUID>, QueryByExampleExecutor<CategoryEntity> {
 
-    List<CategoryEntity> findAllByGroup_key(String groupKey); //NOSONAR
-
-    Optional<CategoryEntity> findByKeyAndGroup_keyAndGroup_typeAndGroup_Accountancy_key(String categoryKey, String groupKey, String groupType, String accountancyKey); //NOSONAR
 }

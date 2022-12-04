@@ -3,9 +3,12 @@ package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 import com.ivarrace.gringotts.application.ports.data.GroupRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
+import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.GroupEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.GroupEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataGroupRepository;
+import com.ivarrace.gringotts.infrastructure.db.springdata.utils.ExampleGenerator;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,15 +24,18 @@ public class GroupRepositoryAdapter implements GroupRepositoryPort {
     }
 
     @Override
-    public List<Group> findAllByTypeAndAccountancy(GroupType type, String accountancyKey) {
-        return GroupEntityMapper.toDomainList(repository.findAllByTypeAndAccountancy_key(type.name(), accountancyKey));
+    public List<Group> findAll(User currentUser, String accountancyKey, GroupType groupType) {
+        Example<GroupEntity> example = ExampleGenerator.getGroupExample(currentUser, Optional.of(accountancyKey), Optional.of(groupType), Optional.empty());
+        return GroupEntityMapper.toDomainList(repository.findAll(example));
     }
 
     @Override
-    public Optional<Group> findByKeyAndTypeAndAccountancy(String groupKey,
-                                                          GroupType groupType,
-                                                          String accountancyKey) {
-        return GroupEntityMapper.toDomain(repository.findByKeyAndTypeAndAccountancy_key(groupKey, groupType.name(), accountancyKey));
+    public Optional<Group> findOne(User currentUser,
+                                   String accountancyKey,
+                                   GroupType groupType,
+                                   String groupKey) {
+        Example<GroupEntity> example = ExampleGenerator.getGroupExample(currentUser, Optional.of(accountancyKey), Optional.of(groupType), Optional.of(groupKey));
+        return GroupEntityMapper.toDomain(repository.findOne(example));
     }
 
     @Override

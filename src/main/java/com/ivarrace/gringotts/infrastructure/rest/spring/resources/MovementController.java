@@ -2,9 +2,9 @@ package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.application.service.MovementService;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.MovementResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewMovementCommand;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.UpdateMovementCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.MovementResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewMovementCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.UpdateMovementCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.MovementMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class MovementController {
                                                                   @RequestParam Optional<GroupType> groupType,
                                                                   @RequestParam Optional<String> categoryKey,
                                                                   @RequestParam Optional<Integer> monthOrdinal,
-                                                                  @RequestParam Optional<Integer> year) {
+                                                                  @RequestParam Optional<Year> year) {
         //TODO pageable
         Optional<Month> month = monthOrdinal.isPresent() ? Optional.of(Month.of(monthOrdinal.get())) : Optional.empty();
         List<MovementResponse> response =
@@ -47,7 +48,7 @@ public class MovementController {
 
     @GetMapping("/{movementId}")
     public ResponseEntity<MovementResponse> getMovementById(@PathVariable String movementId) {
-        MovementResponse response = MovementMapper.INSTANCE.toResponse(movementService.findById(movementId));
+        MovementResponse response = MovementMapper.INSTANCE.toResponse(movementService.findOne(movementId));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

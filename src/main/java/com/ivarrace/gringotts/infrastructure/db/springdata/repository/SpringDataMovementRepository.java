@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface SpringDataMovementRepository extends PagingAndSortingRepository<MovementEntity, UUID>, QueryByExampleExecutor<MovementEntity> {
-    //TODO use examples in all repositories
+
 }

@@ -1,7 +1,7 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.mapper;
 
 import com.ivarrace.gringotts.domain.summary.MonthSummary;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.MonthSummaryResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.MonthSummaryResponse;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

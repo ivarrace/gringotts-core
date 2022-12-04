@@ -1,7 +1,7 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.domain.exception.*;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.ErrorResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.ErrorResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -3,10 +3,10 @@ package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 import com.ivarrace.gringotts.application.service.CategoryService;
 import com.ivarrace.gringotts.application.service.GroupService;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.CategoryResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.GroupResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewCategoryCommand;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewGroupCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.CategoryResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.GroupResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewCategoryCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewGroupCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.CategoryMapper;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.GroupMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class IncomesController {
     @GetMapping("/")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<List<GroupResponse>> getAllIncomesByAccountancyKey(@PathVariable String accountancyKey) {
-        List<GroupResponse> response = GroupMapper.INSTANCE.toResponse(groupService.findByAccountancyKeyAndType(accountancyKey, GroupType.INCOMES));
+        List<GroupResponse> response = GroupMapper.INSTANCE.toResponse(groupService.findAll(accountancyKey, GroupType.INCOMES));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -45,7 +45,7 @@ public class IncomesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<GroupResponse> getById(@PathVariable String accountancyKey, @PathVariable String groupKey) {
         GroupResponse response =
-                GroupMapper.INSTANCE.toResponse(groupService.findByKey(groupKey, accountancyKey, GroupType.INCOMES));
+                GroupMapper.INSTANCE.toResponse(groupService.findOne(groupKey, accountancyKey, GroupType.INCOMES));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -71,7 +71,7 @@ public class IncomesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<List<CategoryResponse>> getIncomeCategories(@PathVariable String accountancyKey, @PathVariable String groupKey) {
         List<CategoryResponse> response =
-                CategoryMapper.INSTANCE.toResponse(categoryService.findAllInGroup(groupKey));
+                CategoryMapper.INSTANCE.toResponse(categoryService.findAll(accountancyKey, GroupType.INCOMES, groupKey));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -89,7 +89,7 @@ public class IncomesController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable String accountancyKey, @PathVariable String groupKey, @PathVariable String categoryKey) {
         CategoryResponse response =
-                CategoryMapper.INSTANCE.toResponse(categoryService.findByKeyInGroup(categoryKey, groupKey, GroupType.INCOMES, accountancyKey));
+                CategoryMapper.INSTANCE.toResponse(categoryService.findOne(accountancyKey, GroupType.INCOMES, groupKey, categoryKey));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

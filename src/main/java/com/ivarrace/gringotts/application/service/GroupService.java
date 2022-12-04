@@ -1,6 +1,7 @@
 package com.ivarrace.gringotts.application.service;
 
 import com.ivarrace.gringotts.application.ports.data.GroupRepositoryPort;
+import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
@@ -14,44 +15,46 @@ import java.util.Optional;
 @Slf4j
 public class GroupService {
 
-    private final GroupRepositoryPort groupRepositoryPort;
+    private final AuthPort authPort;
     private final AccountancyService accountancyService;
+    private final GroupRepositoryPort groupRepositoryPort;
 
-    public GroupService(GroupRepositoryPort groupRepositoryPort, AccountancyService accountancyService) {
+    public GroupService(AuthPort authPort, AccountancyService accountancyService, GroupRepositoryPort groupRepositoryPort) {
+        this.authPort=authPort;
         this.groupRepositoryPort = groupRepositoryPort;
         this.accountancyService = accountancyService;
     }
 
-    public List<Group> findByAccountancyKeyAndType(String accountancyKey, GroupType groupType) {
-        return groupRepositoryPort.findAllByTypeAndAccountancy(groupType, accountancyKey);
+    public List<Group> findAll(String accountancyKey, GroupType groupType) {
+        return groupRepositoryPort.findAll(authPort.getCurrentUser(), accountancyKey, groupType);
+    }
+
+    public Group findOne(String groupKey, String accountancyKey, GroupType groupType) {
+        return groupRepositoryPort.findOne(authPort.getCurrentUser(), accountancyKey, groupType, groupKey).orElseThrow(() -> new ObjectNotFoundException(groupKey));
     }
 
     public Group create(Group group) throws ObjectAlreadyRegisteredException {
         validateIfExists(group);
-        Accountancy accountancy = accountancyService.findByKey(group.getAccountancy().getKey());
+        Accountancy accountancy = accountancyService.findOne(group.getAccountancy().getKey());
         group.setAccountancy(accountancy);
         return groupRepositoryPort.save(group);
     }
 
-    public Group findByKey(String groupKey, String accountancyKey, GroupType groupType) {
-        return groupRepositoryPort.findByKeyAndTypeAndAccountancy(groupKey, groupType, accountancyKey).orElseThrow(() -> new ObjectNotFoundException(groupKey));
-    }
-
     public Group modify(String groupKey, Group group) throws ObjectNotFoundException, ObjectAlreadyRegisteredException {
         validateIfExists(group);
-        Group existing = this.findByKey(groupKey, group.getAccountancy().getKey(), group.getType());
+        Group existing = this.findOne(groupKey, group.getAccountancy().getKey(), group.getType());
         group.setId(existing.getId());
         group.setAccountancy(existing.getAccountancy());
         return groupRepositoryPort.save(group);
     }
 
     public void delete(String accountancyKey, String groupKey, GroupType groupType) throws ObjectNotFoundException {
-        Group existing = this.findByKey(groupKey, accountancyKey, groupType);
+        Group existing = this.findOne(groupKey, accountancyKey, groupType);
         groupRepositoryPort.delete(existing);
     }
 
     private void validateIfExists(Group group) throws ObjectAlreadyRegisteredException{
-        Optional<Group> updatedGroup = groupRepositoryPort.findByKeyAndTypeAndAccountancy(group.getKey(), group.getType(), group.getAccountancy().getKey());
+        Optional<Group> updatedGroup = groupRepositoryPort.findOne(authPort.getCurrentUser(), group.getAccountancy().getKey(), group.getType(), group.getKey());
         if (updatedGroup.isPresent()) {
             throw new ObjectAlreadyRegisteredException(group.getKey());
         }

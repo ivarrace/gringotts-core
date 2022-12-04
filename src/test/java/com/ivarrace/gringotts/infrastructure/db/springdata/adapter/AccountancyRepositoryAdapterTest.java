@@ -1,6 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 
-import com.ivarrace.gringotts.TestUtils;
+import com.ivarrace.gringotts.FakerGenerator;
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.user.User;
@@ -9,6 +9,7 @@ import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringData
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Example;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Collections;
@@ -38,37 +39,33 @@ class AccountancyRepositoryAdapterTest {
 
     @Test
     void findAllByUser() {
-        AccountancyEntity accountancyEntityExample = TestUtils.fakerAccountancyEntity();
-        when(accountancyRepositoryMock.findAllByUsers_UserId(CURRENT_USER_UUID)).thenReturn(Collections.singletonList(accountancyEntityExample));
-        List<Accountancy> result = accountancyRepositoryAdapter.findAllByUser(CURRENT_USER);
+        AccountancyEntity accountancyEntityExample = FakerGenerator.fakerAccountancyEntity();
+        when(accountancyRepositoryMock.findAll(any(Example.class))).thenReturn(Collections.singletonList(accountancyEntityExample));
+        List<Accountancy> result = accountancyRepositoryAdapter.findAll(CURRENT_USER);
         assertEquals(1, result.size());
-        verify(accountancyRepositoryMock, times(1)).findAllByUsers_UserId(CURRENT_USER_UUID);
+        verify(accountancyRepositoryMock, times(1)).findAll(any(Example.class));
         verifyNoMoreInteractions(accountancyRepositoryMock);
     }
 
     @Test
     void findByKeyAndUser_empty() {
-        AccountancyEntity accountancyEntityExample = TestUtils.fakerAccountancyEntity();
-        when(accountancyRepositoryMock.findByKeyAndUsers_UserId(accountancyEntityExample.getKey(), CURRENT_USER_UUID)).thenReturn(Optional.empty());
+        AccountancyEntity accountancyEntityExample = FakerGenerator.fakerAccountancyEntity();
+        when(accountancyRepositoryMock.findOne(any(Example.class))).thenReturn(Optional.empty());
         Optional<Accountancy> result =
-                accountancyRepositoryAdapter.findByKeyAndUser(accountancyEntityExample.getKey(),
-                        CURRENT_USER);
+                accountancyRepositoryAdapter.findOne(CURRENT_USER, accountancyEntityExample.getKey());
         assertTrue(result.isEmpty());
-        verify(accountancyRepositoryMock, times(1)).findByKeyAndUsers_UserId(accountancyEntityExample.getKey(),
-                CURRENT_USER_UUID);
+        verify(accountancyRepositoryMock, times(1)).findOne(any(Example.class));
         verifyNoMoreInteractions(accountancyRepositoryMock);
     }
 
     @Test
     void findByKeyAndUser() {
-        AccountancyEntity accountancyEntity = TestUtils.fakerAccountancyEntity();
-        when(accountancyRepositoryMock.findByKeyAndUsers_UserId(accountancyEntity.getKey(), CURRENT_USER_UUID)).thenReturn(Optional.of(accountancyEntity));
+        AccountancyEntity accountancyEntity = FakerGenerator.fakerAccountancyEntity();
+        when(accountancyRepositoryMock.findOne(any(Example.class))).thenReturn(Optional.of(accountancyEntity));
         Optional<Accountancy> result =
-                accountancyRepositoryAdapter.findByKeyAndUser(accountancyEntity.getKey(),
-                        CURRENT_USER);
+                accountancyRepositoryAdapter.findOne(CURRENT_USER, accountancyEntity.getKey());
         assertTrue(result.isPresent());
-        verify(accountancyRepositoryMock, times(1)).findByKeyAndUsers_UserId(accountancyEntity.getKey(),
-                CURRENT_USER_UUID);
+        verify(accountancyRepositoryMock, times(1)).findOne(any(Example.class));
         verifyNoMoreInteractions(accountancyRepositoryMock);
         assertAll("Mapped values",
                 () -> assertEquals(accountancyEntity.getId().toString(), result.get().getId()),
@@ -86,7 +83,7 @@ class AccountancyRepositoryAdapterTest {
 
     @Test
     void save() {
-        AccountancyEntity accountancyEntity = TestUtils.fakerAccountancyEntity();
+        AccountancyEntity accountancyEntity = FakerGenerator.fakerAccountancyEntity();
         when(accountancyRepositoryMock.save(any())).thenReturn(accountancyEntity);
         Accountancy result = accountancyRepositoryAdapter.save(any());
         verify(accountancyRepositoryMock, times(1)).save(any());
@@ -107,9 +104,10 @@ class AccountancyRepositoryAdapterTest {
 
     @Test
     void save_withGroups() {
-        AccountancyEntity accountancyEntity = TestUtils.fakerAccountancyEntity();
-        accountancyEntity.setGroups(List.of(TestUtils.fakerGroupEntity(), TestUtils.fakerGroupEntity(),
-                TestUtils.fakerGroupEntity(), TestUtils.fakerGroupEntity(), TestUtils.fakerGroupEntity()));
+        AccountancyEntity accountancyEntity = FakerGenerator.fakerAccountancyEntity();
+        accountancyEntity.setGroups(List.of(FakerGenerator.fakerGroupEntity(), FakerGenerator.fakerGroupEntity(),
+                FakerGenerator.fakerGroupEntity(), FakerGenerator.fakerGroupEntity(),
+                FakerGenerator.fakerGroupEntity()));
         when(accountancyRepositoryMock.save(any())).thenReturn(accountancyEntity);
         Accountancy result = accountancyRepositoryAdapter.save(any());
         verify(accountancyRepositoryMock, times(1)).save(any());

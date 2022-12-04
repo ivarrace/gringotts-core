@@ -1,8 +1,8 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.mapper;
 
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.AccountancyResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewAccountancyCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.AccountancyResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewAccountancyCommand;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

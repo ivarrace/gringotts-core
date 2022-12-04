@@ -10,17 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AccountancyUserRoleChecker {
 
-    private final AccountancyService accountancyService;
     private final AuthPort authPort;
+    private final AccountancyService accountancyService;
 
-    public AccountancyUserRoleChecker(AccountancyService accountancyService, AuthPort authPort) {
-        this.accountancyService = accountancyService;
+    public AccountancyUserRoleChecker(AuthPort authPort, AccountancyService accountancyService) {
         this.authPort = authPort;
+        this.accountancyService = accountancyService;
     }
 
     public boolean hasPermission(String accountancyKey, AccountancyUserRoleType accountancyUserRoleType) {
         AccountancyUserRole accountancyUserRole =
-                accountancyService.findByKey(accountancyKey).getUsers().stream()
+                accountancyService.findOne(accountancyKey).getUsers().stream()
                         .filter(userRoles -> authPort.getCurrentUser().getId().equals(userRoles.getUser().getId()))
                         .findFirst()
                         .orElseThrow(() -> new ObjectNotFoundException(accountancyKey));

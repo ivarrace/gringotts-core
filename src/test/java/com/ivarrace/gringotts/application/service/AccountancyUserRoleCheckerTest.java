@@ -1,6 +1,6 @@
 package com.ivarrace.gringotts.application.service;
 
-import com.ivarrace.gringotts.TestUtils;
+import com.ivarrace.gringotts.FakerGenerator;
 import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.accountancy.Accountancy;
 import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRole;
@@ -32,23 +32,23 @@ class AccountancyUserRoleCheckerTest {
     public void init() {
         accountancyServiceMock = mock(AccountancyService.class);
         authPortMock = mock(AuthPort.class);
-        accountancyUserRoleChecker = new AccountancyUserRoleChecker(accountancyServiceMock, authPortMock);
+        accountancyUserRoleChecker = new AccountancyUserRoleChecker(authPortMock, accountancyServiceMock);
     }
 
     @Test
     void hasPermission_VIEWER_request_VIEWER() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.VIEWER);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.VIEWER);
         assertTrue(result);
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -56,19 +56,19 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_VIEWER_request_EDITOR() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.VIEWER);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         String accountancyKey = accountancy.getKey();
         InsufficientPrivilegesException thrown = assertThrows(InsufficientPrivilegesException.class, () -> {
             accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.EDITOR);
         });
         assertTrue(thrown.getMessage().contains(AccountancyUserRoleType.EDITOR.name()));
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -76,19 +76,19 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_VIEWER_request_OWNER() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.VIEWER);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         String accountancyKey = accountancy.getKey();
         InsufficientPrivilegesException thrown = assertThrows(InsufficientPrivilegesException.class, () -> {
             accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.OWNER);
         });
         assertTrue(thrown.getMessage().contains(AccountancyUserRoleType.OWNER.name()));
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -96,16 +96,16 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_EDITOR_request_VIEWER() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.EDITOR);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.VIEWER);
         assertTrue(result);
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -113,16 +113,16 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_EDITOR_request_EDITOR() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.EDITOR);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.EDITOR);
         assertTrue(result);
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -130,19 +130,19 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_EDITOR_request_OWNER() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.EDITOR);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         String accountancyKey = accountancy.getKey();
         InsufficientPrivilegesException thrown = assertThrows(InsufficientPrivilegesException.class, () -> {
             accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.OWNER);
         });
         assertTrue(thrown.getMessage().contains(AccountancyUserRoleType.OWNER.name()));
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -150,16 +150,16 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_OWNER_request_VIEWER() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.OWNER);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.VIEWER);
         assertTrue(result);
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -167,16 +167,16 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_OWNER_request_EDITOR() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.OWNER);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.EDITOR);
         assertTrue(result);
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -184,16 +184,16 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_OWNER_request_OWNER() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(user);
         userRole.setRole(AccountancyUserRoleType.OWNER);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         boolean result = accountancyUserRoleChecker.hasPermission(accountancy.getKey(), AccountancyUserRoleType.OWNER);
         assertTrue(result);
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 
@@ -201,19 +201,19 @@ class AccountancyUserRoleCheckerTest {
     void hasPermission_invalidAsset() {
         User user = new User();
         user.setId("testUser");
-        Accountancy accountancy = TestUtils.fakerAccountancy();
+        Accountancy accountancy = FakerGenerator.fakerAccountancy();
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(new User());
         userRole.setRole(AccountancyUserRoleType.OWNER);
         accountancy.setUsers(Collections.singletonList(userRole));
         when(authPortMock.getCurrentUser()).thenReturn(user);
-        when(accountancyServiceMock.findByKey(accountancy.getKey())).thenReturn(accountancy);
+        when(accountancyServiceMock.findOne(accountancy.getKey())).thenReturn(accountancy);
         String accountancyKey = accountancy.getKey();
         ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
             accountancyUserRoleChecker.hasPermission(accountancyKey, AccountancyUserRoleType.OWNER);
         });
         assertTrue(thrown.getMessage().contains(accountancy.getKey()));
-        verify(accountancyServiceMock, times(1)).findByKey(accountancy.getKey());
+        verify(accountancyServiceMock, times(1)).findOne(accountancy.getKey());
         verifyNoMoreInteractions(accountancyServiceMock);
     }
 

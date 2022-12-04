@@ -2,8 +2,8 @@ package com.ivarrace.gringotts.infrastructure.rest.spring.mapper;
 
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.GroupResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewGroupCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.GroupResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewGroupCommand;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

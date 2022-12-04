@@ -1,6 +1,6 @@
 package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 
-import com.ivarrace.gringotts.TestUtils;
+import com.ivarrace.gringotts.FakerGenerator;
 import com.ivarrace.gringotts.domain.exception.UserAlreadyRegisteredException;
 import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.domain.user.UserAuthority;
@@ -35,7 +35,7 @@ class UserRepositoryAdapterTest {
 
     @Test
     void findByUsername_empty() {
-        UserEntity entityExample = TestUtils.fakerUserEntity();
+        UserEntity entityExample = FakerGenerator.fakerUserEntity();
         when(springDataRepositoryMock.findByUsername(entityExample.getUsername())).thenReturn(Optional.empty());
         Optional<User> result = repositoryAdapter.findByUsername(entityExample.getUsername());
         assertTrue(result.isEmpty());
@@ -45,7 +45,7 @@ class UserRepositoryAdapterTest {
 
     @Test
     void findByUsername() {
-        UserEntity entityExample = TestUtils.fakerUserEntity();
+        UserEntity entityExample = FakerGenerator.fakerUserEntity();
         when(springDataRepositoryMock.findByUsername(entityExample.getUsername())).thenReturn(Optional.of(entityExample));
         Optional<User> result = repositoryAdapter.findByUsername(entityExample.getUsername());
         assertTrue(result.isPresent());
@@ -55,7 +55,7 @@ class UserRepositoryAdapterTest {
 
     @Test
     void save_fail() {
-        UserEntity entityExample = TestUtils.fakerUserEntity();
+        UserEntity entityExample = FakerGenerator.fakerUserEntity();
         String encodedPwd = "secret";
         when(springDataRepositoryMock.findByUsername(entityExample.getUsername())).thenReturn(Optional.of(entityExample));
         User toSave = new User();
@@ -72,7 +72,7 @@ class UserRepositoryAdapterTest {
 
     @Test
     void save() {
-        UserEntity entityExample = TestUtils.fakerUserEntity();
+        UserEntity entityExample = FakerGenerator.fakerUserEntity();
         String encodedPwd = "secret";
         when(springDataRepositoryMock.findByUsername(entityExample.getUsername())).thenReturn(Optional.empty());
         when(bCryptPasswordEncoderMock.encode(entityExample.getPassword())).thenReturn(encodedPwd);

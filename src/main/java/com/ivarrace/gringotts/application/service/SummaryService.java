@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -22,45 +23,44 @@ public class SummaryService {
     public SummaryService(MovementService movementService) {
         this.movementService = movementService;
     }
-//TODO use month and year from java.time
-    private AnnualSummary generate(Optional<String> accountancyKey, Optional<GroupType> groupType, Optional<String> groupKey,
-                                  Optional<String> categoryKey, Integer year, Optional<Month> month) {
-        List<Movement> movements =
-                movementService.findAll(accountancyKey, groupKey, groupType, categoryKey, month, Optional.of(year));
 
-        List<MonthSummary> monthResumeList =
-                Arrays.stream(Month.values()).map(monthItem -> {
+    public Accountancy generateAnnualSummaryForAccountancy(Accountancy accountancy, Optional<Year> year) {
+        Year searchByYear = year.orElse(Year.of(LocalDate.now().getYear()));
+        List<Movement> accountancyMovements =
+                movementService.findAll(Optional.of(accountancy.getKey()), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(searchByYear));
+
+        accountancy.setAnnualSummary(generateAnnualSummary(accountancyMovements, searchByYear));
+        for(Group group : accountancy.getExpenses()){
+            List<Movement> groupMovements = accountancyMovements.stream()
+                    .filter(movement -> movement.getCategory().getGroup().getKey().equals(group.getKey()))
+                    .collect(Collectors.toList());
+            group.setAnnualSummary(generateAnnualSummary(groupMovements, searchByYear));
+            for(Category category : group.getCategories()){
+                List<Movement> categoryMovements = groupMovements.stream()
+                        .filter(movement -> movement.getCategory().getKey().equals(category.getKey()))
+                        .collect(Collectors.toList());
+                category.setAnnualSummary(generateAnnualSummary(categoryMovements, searchByYear));
+            }
+        }
+        return accountancy;
+    }
+
+    private AnnualSummary generateAnnualSummary(List<Movement> movements, Year year){
+        double total = movements.stream().mapToDouble(o -> o.getAmount().doubleValue()).sum();
+        AnnualSummary annualSummary = new AnnualSummary();
+        annualSummary.setYear(year);
+        annualSummary.setTotal(BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP));
+        annualSummary.setAverage(BigDecimal.valueOf(total / Month.values().length).setScale(2, RoundingMode.HALF_UP));
+        annualSummary.setMonthly(generateMonthSummary(movements));
+        return annualSummary;
+    }
+
+    private List<MonthSummary> generateMonthSummary(List<Movement> movements) {
+        return Arrays.stream(Month.values()).map(monthItem -> {
                     double monthValues = movements.stream()
                             .filter(movement -> movement.getDate().getMonth().equals(monthItem))
                             .mapToDouble(movement -> movement.getAmount().doubleValue()).sum();
                     return MonthSummary.builder().month(monthItem).total(BigDecimal.valueOf(monthValues).setScale(2, RoundingMode.HALF_UP)).build();
                 }).collect(Collectors.toList());
-
-        AnnualSummary annualSummary = new AnnualSummary();
-        double total = movements.stream().mapToDouble(o -> o.getAmount().doubleValue()).sum();
-        annualSummary.setYear(year);
-        annualSummary.setTotal(BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP));
-        annualSummary.setAverage(BigDecimal.valueOf(total / 12).setScale(2, RoundingMode.HALF_UP));
-        annualSummary.setMonthly(monthResumeList);
-        return annualSummary;
-    }
-
-    public Accountancy generateAnnualSummaryForAccountancy(Accountancy accountancy, Optional<Integer> optionalYear) {
-        //TODO gel all movements an filter with stream
-        Integer searchByYear = optionalYear.orElse(LocalDate.now().getYear());
-        accountancy.setAnnualSummary(this.generate(Optional.of(accountancy.getKey()), Optional.empty(),Optional.empty(),Optional.empty(),searchByYear,Optional.empty()));
-        for (Group group: accountancy.getExpenses()) {
-            group.setAnnualSummary(this.generate(Optional.of(accountancy.getKey()), Optional.of(GroupType.EXPENSES), Optional.of(group.getKey()), Optional.empty(), searchByYear,Optional.empty()));
-            for(Category category: group.getCategories()){
-                category.setAnnualSummary(this.generate(Optional.of(accountancy.getKey()), Optional.of(GroupType.EXPENSES), Optional.of(group.getKey()), Optional.of(category.getKey()), searchByYear,Optional.empty()));
-            }
-        }
-        for (Group group: accountancy.getIncomes()) {
-            group.setAnnualSummary(this.generate(Optional.of(accountancy.getKey()), Optional.of(GroupType.INCOMES), Optional.of(group.getKey()), Optional.empty(), searchByYear,Optional.empty()));
-            for(Category category: group.getCategories()){
-                category.setAnnualSummary(this.generate(Optional.of(accountancy.getKey()), Optional.of(GroupType.EXPENSES), Optional.of(group.getKey()), Optional.of(category.getKey()), searchByYear,Optional.empty()));
-            }
-        }
-        return accountancy;
     }
 }

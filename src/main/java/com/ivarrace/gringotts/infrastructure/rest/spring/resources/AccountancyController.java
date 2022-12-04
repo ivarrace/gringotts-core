@@ -1,8 +1,8 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.application.service.AccountancyService;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.AccountancyResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewAccountancyCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.AccountancyResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewAccountancyCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.AccountancyMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,14 +36,14 @@ public class AccountancyController {
 
     @GetMapping("/{accountancyKey}")
     public ResponseEntity<AccountancyResponse> getByKey(@PathVariable String accountancyKey) {
-        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findByKey(accountancyKey));
+        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findOne(accountancyKey));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{accountancyKey}/summary")
     public ResponseEntity<AccountancyResponse> getSummaryByKey(@PathVariable String accountancyKey,
-                                                               @RequestParam Optional<Integer> year) {
-        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findByKeyWIthSummary(accountancyKey, year));
+                                                               @RequestParam Optional<Year> year) {
+        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findOneWithSummary(accountancyKey, year));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -50,14 +51,14 @@ public class AccountancyController {
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
     public ResponseEntity<AccountancyResponse> modify(@PathVariable String accountancyKey,
                                                       @Valid @RequestBody NewAccountancyCommand command) {
-        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.modifyByKey(accountancyKey, AccountancyMapper.INSTANCE.toDomain(command)));
+        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.modify(accountancyKey, AccountancyMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{accountancyKey}")
     @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey, T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).OWNER)")
     public ResponseEntity<AccountancyResponse> delete(@PathVariable String accountancyKey) {
-        accountancyServer.deleteByKey(accountancyKey);
+        accountancyServer.delete(accountancyKey);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

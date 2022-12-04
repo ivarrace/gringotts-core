@@ -1,4 +1,4 @@
-package com.ivarrace.gringotts.infrastructure.rest.spring.dto;
+package com.ivarrace.gringotts.infrastructure.rest.spring.dto.response;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

@@ -4,17 +4,20 @@ import com.ivarrace.gringotts.application.ports.data.MovementRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
 import com.ivarrace.gringotts.domain.user.User;
-import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.*;
+import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.MovementEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.MovementEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.Utils;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataMovementRepository;
+import com.ivarrace.gringotts.infrastructure.db.springdata.utils.ExampleGenerator;
 import org.springframework.data.domain.Example;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
 import java.time.Month;
+import java.time.Year;
 import java.time.YearMonth;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MovementRepositoryAdapter implements MovementRepositoryPort {
@@ -26,45 +29,27 @@ public class MovementRepositoryAdapter implements MovementRepositoryPort {
     }
 
     @Override
-    public List<Movement> findAll(Optional<String> accountancyKey, Optional<GroupType> groupType, Optional<String> groupKey, Optional<String> categoryKey,
-                                  Optional<Integer> monthOrdinal, Optional<Integer> year, User currentUser) {
-        MovementEntity exampleMovement = new MovementEntity();
-        CategoryEntity exampleCategory = new CategoryEntity();
-        GroupEntity exampleGroup = new GroupEntity();
-        AccountancyEntity exampleAccountancy = new AccountancyEntity();
-        AccountancyUserEntity accountancyUser = new AccountancyUserEntity();
-        UserEntity user = new UserEntity();
-        user.setId(UUID.fromString(currentUser.getId()));
-        accountancyUser.setUser(user);
-        exampleAccountancy.setUsers(Collections.singletonList(accountancyUser));
-        exampleGroup.setAccountancy(exampleAccountancy);
-
-        exampleCategory.setKey(categoryKey.orElse(null));
-        exampleMovement.setCategory(exampleCategory);
-
-        exampleGroup.setKey(groupKey.orElse(null));
-        exampleGroup.setType(groupType.isPresent() ? groupType.get().name() : null);
-        exampleCategory.setGroup(exampleGroup);
-
-        exampleAccountancy.setKey(accountancyKey.orElse(null));
-
-        Example<MovementEntity> example = Example.of(exampleMovement);
+    public List<Movement> findAll(Optional<String> accountancyKey, Optional<GroupType> groupType,
+                                  Optional<String> groupKey, Optional<String> categoryKey,
+                                  Optional<Month> month, Optional<Year> year, User currentUser) {
+        Example<MovementEntity> example = ExampleGenerator.getMovementExample(currentUser, accountancyKey, groupType,
+                groupKey, categoryKey, Optional.empty());
         List<MovementEntity> result; //TODO filter in query by dates
-        if(!year.isPresent()){
-            if(!monthOrdinal.isPresent()){
+        if (!year.isPresent()) {
+            if (!month.isPresent()) {
                 result = Streamable.of(springDataMovementRepository.findAll(example)).toList();
             } else {
                 result = Streamable.of(springDataMovementRepository.findAll(example))
-                        .filter(movementEntity -> movementEntity.getDate().getMonth().equals(Month.of(monthOrdinal.get())))
+                        .filter(movementEntity -> movementEntity.getDate().getMonth().equals(month.get()))
                         .toList();
             }
         } else {
-            if(!monthOrdinal.isPresent()){
+            if (!month.isPresent()) {
                 result = Streamable.of(springDataMovementRepository.findAll(example))
-                        .filter(movementEntity -> movementEntity.getDate().getYear()==year.get())
+                        .filter(movementEntity -> movementEntity.getDate().getYear() == year.get().getValue())
                         .toList();
             } else {
-                YearMonth findInDate = YearMonth.of(year.get(), Month.of(monthOrdinal.get()));
+                YearMonth findInDate = YearMonth.of(year.get().getValue(), month.get());
                 result = Streamable.of(springDataMovementRepository.findAll(example))
                         .filter(movementEntity -> YearMonth.from(movementEntity.getDate()).equals(findInDate))
                         .toList();

@@ -11,22 +11,24 @@ import org.springframework.context.annotation.Lazy;
 public class SpringBootServiceConfig {
 
     @Bean
-    public AccountancyService accountancyService(AccountancyRepositoryAdapter accountancyRepositoryAdapter,
-                                                 SpringContextAdapter springContextAdapter,
+    public AccountancyService accountancyService(SpringContextAdapter springContextAdapter,
+                                                 AccountancyRepositoryAdapter accountancyRepositoryAdapter,
                                                  SummaryService summaryService) {
-        return new AccountancyService(accountancyRepositoryAdapter, springContextAdapter, summaryService);
+        return new AccountancyService(springContextAdapter, accountancyRepositoryAdapter, summaryService);
     }
 
     @Bean
-    public GroupService groupService(GroupRepositoryAdapter groupRepositoryAdapter,
-                                     AccountancyService accountancyService) {
-        return new GroupService(groupRepositoryAdapter, accountancyService);
+    public GroupService groupService(SpringContextAdapter springContextAdapter,
+                                     AccountancyService accountancyService,
+                                     GroupRepositoryAdapter groupRepositoryAdapter) {
+        return new GroupService(springContextAdapter, accountancyService, groupRepositoryAdapter);
     }
 
     @Bean
-    public CategoryService categoryService(CategoryRepositoryAdapter categoryRepositoryAdapter,
-                                           GroupService groupService) {
-        return new CategoryService(categoryRepositoryAdapter, groupService);
+    public CategoryService categoryService(SpringContextAdapter springContextAdapter,
+                                           GroupService groupService,
+                                           CategoryRepositoryAdapter categoryRepositoryAdapter) {
+        return new CategoryService(springContextAdapter, groupService, categoryRepositoryAdapter);
     }
 
     @Bean //TODO fix Lazy
@@ -46,7 +48,7 @@ public class SpringBootServiceConfig {
     @Bean
     public AccountancyUserRoleChecker accountancyUserRoleChecker(AccountancyService accountancyService,
                                                                  SpringContextAdapter springContextAdapter) {
-        return new AccountancyUserRoleChecker(accountancyService, springContextAdapter);
+        return new AccountancyUserRoleChecker(springContextAdapter, accountancyService);
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package com.ivarrace.gringotts.application.service;
 
 import com.ivarrace.gringotts.application.ports.data.CategoryRepositoryPort;
+import com.ivarrace.gringotts.application.ports.security.AuthPort;
 import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.Group;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
@@ -14,47 +15,61 @@ import java.util.Optional;
 @Slf4j
 public class CategoryService {
 
-    private final CategoryRepositoryPort categoryRepositoryPort;
+    private final AuthPort authPort;
     private final GroupService groupService;
+    private final CategoryRepositoryPort categoryRepositoryPort;
 
-    public CategoryService(CategoryRepositoryPort categoryRepositoryPort, GroupService groupService) {
+    public CategoryService(AuthPort authPort,
+                           GroupService groupService,
+                           CategoryRepositoryPort categoryRepositoryPort) {
+        this.authPort = authPort;
         this.categoryRepositoryPort = categoryRepositoryPort;
         this.groupService = groupService;
     }
 
-    public List<Category> findAllInGroup(String groupKey) {
-        return categoryRepositoryPort.findAllByGroup(groupKey);
+    public List<Category> findAll(String accountancyKey, GroupType groupType, String groupKey) {
+        return categoryRepositoryPort.findAll(authPort.getCurrentUser(), accountancyKey, groupType, groupKey);
     }
 
-    public Category findByKeyInGroup(String categoryKey, String groupKey, GroupType groupType, String accountancyKey) throws ObjectNotFoundException {
-        return categoryRepositoryPort.findByKeyAndGroup(categoryKey, groupKey, groupType, accountancyKey).orElseThrow(() -> new ObjectNotFoundException(categoryKey));
+    public Category findOne(String accountancyKey, GroupType groupType, String groupKey, String categoryKey) throws ObjectNotFoundException {
+        return categoryRepositoryPort.findOne(
+                authPort.getCurrentUser(), accountancyKey, groupType,
+                groupKey, categoryKey).orElseThrow(() -> new ObjectNotFoundException(categoryKey));
     }
 
-    public Category create(Category category) throws ObjectAlreadyRegisteredException{
+    public Category create(Category category) throws ObjectAlreadyRegisteredException {
         validateIfExists(category);
-        Group group = groupService.findByKey(category.getGroup().getKey(),
+        Group group = groupService.findOne(category.getGroup().getKey(),
                 category.getGroup().getAccountancy().getKey(), category.getGroup().getType());
         category.setGroup(group);
         return categoryRepositoryPort.save(category);
     }
 
-    public Category modify(String categoryKey, Category category) throws ObjectNotFoundException, ObjectAlreadyRegisteredException {
+    public Category modify(String categoryKey, Category category) throws ObjectNotFoundException,
+            ObjectAlreadyRegisteredException {
         validateIfExists(category);
-        Category existing = this.findByKeyInGroup(categoryKey, category.getGroup().getKey(),
-                category.getGroup().getType(), category.getGroup().getAccountancy().getKey());
+        Category existing = this.findOne(
+                category.getGroup().getAccountancy().getKey(),
+                category.getGroup().getType(),
+                category.getGroup().getKey(),
+                categoryKey);
         category.setId(existing.getId());
         category.setGroup(existing.getGroup());
         return categoryRepositoryPort.save(category);
     }
 
     public void delete(String categoryKey, String groupKey, GroupType groupType, String accountancyKey) throws ObjectNotFoundException {
-        Category existing = this.findByKeyInGroup(categoryKey, groupKey, groupType, accountancyKey);
+        Category existing = this.findOne(accountancyKey, groupType, groupKey, categoryKey);
         categoryRepositoryPort.delete(existing);
     }
 
-    private void validateIfExists(Category category) throws ObjectAlreadyRegisteredException{
-        Optional<Category> persistedCategory = categoryRepositoryPort.findByKeyAndGroup(category.getKey(),
-                category.getGroup().getKey(), category.getGroup().getType(),category.getGroup().getAccountancy().getKey());
+    private void validateIfExists(Category category) throws ObjectAlreadyRegisteredException {
+        Optional<Category> persistedCategory = categoryRepositoryPort.findOne(
+                authPort.getCurrentUser(),
+                category.getGroup().getAccountancy().getKey(),
+                category.getGroup().getType(),
+                category.getGroup().getKey(),
+                category.getKey());
         if (persistedCategory.isPresent()) {
             throw new ObjectAlreadyRegisteredException(persistedCategory.get().getKey());
         }

@@ -27,7 +27,7 @@ public class GroupEntity extends BaseEntityAuditable {
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     private List<CategoryEntity> categories;
 
-    @PreUpdate
+    @PreUpdate //TODO fix update date
     public void preUpdateFunction(){
         accountancy.setLastModified(LocalDateTime.now());
     }

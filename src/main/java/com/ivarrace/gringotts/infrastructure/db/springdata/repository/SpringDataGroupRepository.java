@@ -2,16 +2,12 @@ package com.ivarrace.gringotts.infrastructure.db.springdata.repository;
 
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.GroupEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface SpringDataGroupRepository extends JpaRepository<GroupEntity, UUID> {
+public interface SpringDataGroupRepository extends JpaRepository<GroupEntity, UUID> , QueryByExampleExecutor<GroupEntity> {
 
-    List<GroupEntity> findAllByTypeAndAccountancy_key(String type, String accountancyKey); //NOSONAR
-
-    Optional<GroupEntity> findByKeyAndTypeAndAccountancy_key(String groupKey, String type, String accountancyId); //NOSONAR
 }

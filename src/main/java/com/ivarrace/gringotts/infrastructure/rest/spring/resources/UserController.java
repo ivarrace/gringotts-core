@@ -1,8 +1,8 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.application.service.UserService;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewUserCommand;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.UserResponse;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewUserCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.UserResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

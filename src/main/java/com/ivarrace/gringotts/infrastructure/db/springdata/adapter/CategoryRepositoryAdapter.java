@@ -3,9 +3,12 @@ package com.ivarrace.gringotts.infrastructure.db.springdata.adapter;
 import com.ivarrace.gringotts.application.ports.data.CategoryRepositoryPort;
 import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
+import com.ivarrace.gringotts.domain.user.User;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.CategoryEntity;
 import com.ivarrace.gringotts.infrastructure.db.springdata.mapper.CategoryEntityMapper;
 import com.ivarrace.gringotts.infrastructure.db.springdata.repository.SpringDataCategoryRepository;
+import com.ivarrace.gringotts.infrastructure.db.springdata.utils.ExampleGenerator;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,14 +24,15 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
     }
 
     @Override
-    public List<Category> findAllByGroup(String groupKey) {
-        return CategoryEntityMapper.toDomainList(categoryRepository.findAllByGroup_key(groupKey));
+    public List<Category> findAll(User currentUser, String accountancyKey, GroupType groupType, String groupKey) {
+        Example<CategoryEntity> example = ExampleGenerator.getCategoryExample(currentUser, Optional.of(accountancyKey), Optional.of(groupType), Optional.of(groupKey), Optional.empty());
+        return CategoryEntityMapper.toDomainList(categoryRepository.findAll(example));
     }
 
     @Override
-    public Optional<Category> findByKeyAndGroup(String categoryKey, String groupKey, GroupType groupType, String accountancyKey) {
-        return CategoryEntityMapper.toDomain(
-                categoryRepository.findByKeyAndGroup_keyAndGroup_typeAndGroup_Accountancy_key(categoryKey, groupKey, groupType.name(), accountancyKey));
+    public Optional<Category> findOne(User currentUser, String accountancyKey, GroupType groupType, String groupKey, String categoryKey) {
+        Example<CategoryEntity> example = ExampleGenerator.getCategoryExample(currentUser, Optional.of(accountancyKey), Optional.of(groupType), Optional.of(groupKey), Optional.of(categoryKey));
+        return CategoryEntityMapper.toDomain(categoryRepository.findOne(example));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.ivarrace.gringotts.infrastructure.rest.spring.dto;
+package com.ivarrace.gringotts.infrastructure.rest.spring.dto.command;
 
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import lombok.Getter;

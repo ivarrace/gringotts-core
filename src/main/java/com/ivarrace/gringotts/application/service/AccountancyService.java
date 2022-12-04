@@ -9,17 +9,19 @@ import com.ivarrace.gringotts.domain.exception.ObjectAlreadyRegisteredException;
 import com.ivarrace.gringotts.domain.exception.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 public class AccountancyService {
 
-    private final AccountancyRepositoryPort accountancyRepositoryPort;
     private final AuthPort authPort;
+    private final AccountancyRepositoryPort accountancyRepositoryPort;
     private final SummaryService summaryService;
 
-    public AccountancyService(AccountancyRepositoryPort accountancyRepositoryPort, AuthPort authPort,
+    public AccountancyService(AuthPort authPort,
+                              AccountancyRepositoryPort accountancyRepositoryPort,
                               SummaryService summaryService) {
         this.accountancyRepositoryPort = accountancyRepositoryPort;
         this.authPort = authPort;
@@ -27,15 +29,15 @@ public class AccountancyService {
     }
 
     public List<Accountancy> findAll() {
-        return accountancyRepositoryPort.findAllByUser(authPort.getCurrentUser());
+        return accountancyRepositoryPort.findAll(authPort.getCurrentUser());
     }
 
-    public Accountancy findByKey(String accountancyKey) {
-        return accountancyRepositoryPort.findByKeyAndUser(accountancyKey, authPort.getCurrentUser()).orElseThrow(() -> new ObjectNotFoundException(accountancyKey));
+    public Accountancy findOne(String accountancyKey) {
+        return accountancyRepositoryPort.findOne(authPort.getCurrentUser(), accountancyKey).orElseThrow(() -> new ObjectNotFoundException(accountancyKey));
     }
 
-    public Accountancy findByKeyWIthSummary(String accountancyKey, Optional<Integer> year) {
-        Accountancy accountancy = this.findByKey(accountancyKey);
+    public Accountancy findOneWithSummary(String accountancyKey, Optional<Year> year) {
+        Accountancy accountancy = this.findOne(accountancyKey);
         return summaryService.generateAnnualSummaryForAccountancy(accountancy, year);
     }
 
@@ -48,23 +50,22 @@ public class AccountancyService {
         return accountancyRepositoryPort.save(accountancy);
     }
 
-    public Accountancy modifyByKey(String accountancyKey, Accountancy accountancy) throws ObjectNotFoundException,
+    public Accountancy modify(String accountancyKey, Accountancy accountancy) throws ObjectNotFoundException,
             ObjectAlreadyRegisteredException {
         validateIfExists(accountancy);
-        Accountancy existing = this.findByKey(accountancyKey);
+        Accountancy existing = this.findOne(accountancyKey);
         accountancy.setId(existing.getId());
         accountancy.setUsers(existing.getUsers());
         return accountancyRepositoryPort.save(accountancy);
     }
 
-    public void deleteByKey(String accountancyKey) {
-        Accountancy existing = this.findByKey(accountancyKey);
+    public void delete(String accountancyKey) {
+        Accountancy existing = this.findOne(accountancyKey);
         accountancyRepositoryPort.delete(existing);
     }
 
     private void validateIfExists(Accountancy accountancy) throws ObjectAlreadyRegisteredException {
-        Optional<Accountancy> persistedAccountancy = accountancyRepositoryPort.findByKeyAndUser(accountancy.getKey(),
-                authPort.getCurrentUser());
+        Optional<Accountancy> persistedAccountancy = accountancyRepositoryPort.findOne(authPort.getCurrentUser(), accountancy.getKey());
         if (persistedAccountancy.isPresent()) {
             throw new ObjectAlreadyRegisteredException(accountancy.getKey());
         }

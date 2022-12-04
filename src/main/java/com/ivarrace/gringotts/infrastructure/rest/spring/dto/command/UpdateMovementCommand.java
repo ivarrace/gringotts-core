@@ -1,4 +1,4 @@
-package com.ivarrace.gringotts.infrastructure.rest.spring.dto;
+package com.ivarrace.gringotts.infrastructure.rest.spring.dto.command;
 
 import lombok.Getter;
 import lombok.Setter;

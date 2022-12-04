@@ -10,6 +10,7 @@ import com.ivarrace.gringotts.domain.exception.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,12 +35,12 @@ public class MovementService {
 
     public List<Movement> findAll(Optional<String> accountancyKey, Optional<String> groupKey,
                                   Optional<GroupType> groupType, Optional<String> categoryKey,
-                                  Optional<Month> month, Optional<Integer> year) {
+                                  Optional<Month> month, Optional<Year> year) {
         return movementRepositoryPort.findAll(
-                accountancyKey, groupType, groupKey, categoryKey, month.isPresent() ? Optional.of(month.get().getValue()) : Optional.empty(), year, authPort.getCurrentUser());
+                accountancyKey, groupType, groupKey, categoryKey, month, year, authPort.getCurrentUser());
     }
 
-    public Movement findById(String movementId) {
+    public Movement findOne(String movementId) {
         Movement movement =
                 movementRepositoryPort.findById(movementId).orElseThrow(() -> new ObjectNotFoundException(movementId));
         accountancyUserRoleChecker.validatePermission(movement.getCategory().getGroup().getAccountancy().getKey(),
@@ -50,16 +51,18 @@ public class MovementService {
     public Movement create(Movement movement) {
         accountancyUserRoleChecker.validatePermission(movement.getCategory().getGroup().getAccountancy().getKey(),
                 AccountancyUserRoleType.EDITOR);
-       Category category = categoryService.findByKeyInGroup(movement.getCategory().getKey(),
-                movement.getCategory().getGroup().getKey(), movement.getCategory().getGroup().getType(),
-                movement.getCategory().getGroup().getAccountancy().getKey());
+        Category category = categoryService.findOne(
+                movement.getCategory().getGroup().getAccountancy().getKey(),
+                movement.getCategory().getGroup().getType(),
+                movement.getCategory().getGroup().getKey(),
+                movement.getCategory().getKey());
         movement.setCategory(category);
         return movementRepositoryPort.save(movement);
 
     }
 
     public Movement modify(String movementId, Movement movement) throws ObjectNotFoundException {
-        Movement existing = this.findById(movementId);
+        Movement existing = this.findOne(movementId);
         accountancyUserRoleChecker.validatePermission(existing.getCategory().getGroup().getAccountancy().getKey(),
                 AccountancyUserRoleType.EDITOR);
         movement.setId(existing.getId());
@@ -68,7 +71,7 @@ public class MovementService {
     }
 
     public void delete(String movementId) throws ObjectNotFoundException {
-        Movement existing = this.findById(movementId);
+        Movement existing = this.findOne(movementId);
         accountancyUserRoleChecker.validatePermission(existing.getCategory().getGroup().getAccountancy().getKey(),
                 AccountancyUserRoleType.EDITOR);
         movementRepositoryPort.delete(existing);
