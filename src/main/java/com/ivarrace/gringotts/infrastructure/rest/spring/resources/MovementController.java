@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 @RestController()
 @RequiredArgsConstructor
@@ -22,14 +24,17 @@ public class MovementController {
     private final MovementService movementService;
 
     @GetMapping("/")
-    public ResponseEntity<List<MovementResponse>> getAllMovements(@RequestParam(required = false) String accountancyKey,
-                                                                  @RequestParam(required = false) String groupKey,
-                                                                  @RequestParam(required = false) GroupType groupType,
-                                                                  @RequestParam(required = false) String categoryKey,
-                                                                  @RequestParam(required = false) Integer monthOrdinal,
-                                                                  @RequestParam(required = false) Integer year) {
+    public ResponseEntity<List<MovementResponse>> getAllMovements(@RequestParam Optional<String> accountancyKey,
+                                                                  @RequestParam Optional<String> groupKey,
+                                                                  @RequestParam Optional<GroupType> groupType,
+                                                                  @RequestParam Optional<String> categoryKey,
+                                                                  @RequestParam Optional<Integer> monthOrdinal,
+                                                                  @RequestParam Optional<Integer> year) {
         //TODO pageable
-        List<MovementResponse> response = MovementMapper.INSTANCE.toResponse(movementService.findAll(accountancyKey,groupKey, groupType, categoryKey, monthOrdinal, year));
+        Optional<Month> month = monthOrdinal.isPresent() ? Optional.of(Month.of(monthOrdinal.get())) : Optional.empty();
+        List<MovementResponse> response =
+                MovementMapper.INSTANCE.toResponse(movementService.findAll(accountancyKey, groupKey, groupType,
+                        categoryKey, month, year));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -49,7 +54,8 @@ public class MovementController {
     @PutMapping("/{movementId}")
     public ResponseEntity<MovementResponse> modifyMovement(@PathVariable String movementId,
                                                            @RequestBody UpdateMovementCommand command) {
-        MovementResponse response = MovementMapper.INSTANCE.toResponse(movementService.modify(movementId, MovementMapper.INSTANCE.toDomain(command)));
+        MovementResponse response = MovementMapper.INSTANCE.toResponse(movementService.modify(movementId,
+                MovementMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

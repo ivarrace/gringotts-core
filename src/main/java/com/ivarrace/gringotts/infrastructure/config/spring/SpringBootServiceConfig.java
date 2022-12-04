@@ -5,14 +5,16 @@ import com.ivarrace.gringotts.infrastructure.db.springdata.adapter.*;
 import com.ivarrace.gringotts.infrastructure.security.spring.adapter.SpringContextAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class SpringBootServiceConfig {
 
     @Bean
     public AccountancyService accountancyService(AccountancyRepositoryAdapter accountancyRepositoryAdapter,
-                                                 SpringContextAdapter springContextAdapter) {
-        return new AccountancyService(accountancyRepositoryAdapter, springContextAdapter);
+                                                 SpringContextAdapter springContextAdapter,
+                                                 SummaryService summaryService) {
+        return new AccountancyService(accountancyRepositoryAdapter, springContextAdapter, summaryService);
     }
 
     @Bean
@@ -27,11 +29,11 @@ public class SpringBootServiceConfig {
         return new CategoryService(categoryRepositoryAdapter, groupService);
     }
 
-    @Bean
+    @Bean //TODO fix Lazy
     public MovementService movementService(MovementRepositoryAdapter movementRepositoryAdapter,
-                                           CategoryService categoryService,
+                                           @Lazy CategoryService categoryService,
                                            SpringContextAdapter springContextAdapter,
-                                           AccountancyUserRoleChecker accountancyUserRoleChecker) {
+                                           @Lazy AccountancyUserRoleChecker accountancyUserRoleChecker) {
         return new MovementService(movementRepositoryAdapter, categoryService, springContextAdapter,
                 accountancyUserRoleChecker);
     }
@@ -48,8 +50,8 @@ public class SpringBootServiceConfig {
     }
 
     @Bean
-    public ReportService reportService(MovementService movementService) {
-        return new ReportService(movementService);
+    public SummaryService summaryService(MovementService movementService) {
+        return new SummaryService(movementService);
     }
 
 }

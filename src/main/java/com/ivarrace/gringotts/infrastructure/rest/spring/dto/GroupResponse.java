@@ -15,6 +15,6 @@ public class GroupResponse {
     private LocalDateTime createdDate;
     private LocalDateTime lastModified;
     private List<CategoryResponse> categories;
-    private AnnualSummary summary;
+    private AnnualSummaryResponse annualSummary;
 
 }

@@ -9,8 +9,9 @@ import java.util.Optional;
 
 public interface MovementRepositoryPort {
 
-    List<Movement> findAll(String accountancyKey, GroupType groupType, String groupKey, String categoryKey,
-                           Integer monthOrdinal, Integer year, User currentUser);
+    List<Movement> findAll(Optional<String> accountancyKey, Optional<GroupType> groupType, Optional<String> groupKey,
+                           Optional<String> categoryKey,
+                           Optional<Integer> monthOrdinal, Optional<Integer> year, User currentUser);
 
     Optional<Movement> findById(String movementId);
 

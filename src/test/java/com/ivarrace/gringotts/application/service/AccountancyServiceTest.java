@@ -25,6 +25,7 @@ class AccountancyServiceTest {
     private static final User MOCK_USER = new User();
     private AccountancyRepositoryPort accountancyRepositoryPortMock;
     private AuthPort authPortMock;
+    private SummaryService summaryService;
 
     private AccountancyService accountancyService;
 
@@ -32,7 +33,8 @@ class AccountancyServiceTest {
     public void init() {
         accountancyRepositoryPortMock = mock(AccountancyRepositoryPort.class);
         authPortMock = mock(AuthPort.class);
-        accountancyService = new AccountancyService(accountancyRepositoryPortMock, authPortMock);
+        summaryService = mock(SummaryService.class);
+        accountancyService = new AccountancyService(accountancyRepositoryPortMock, authPortMock, summaryService);
         when(authPortMock.getCurrentUser()).thenReturn(MOCK_USER);
     }
 

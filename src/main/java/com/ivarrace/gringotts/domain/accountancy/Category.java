@@ -1,5 +1,6 @@
 package com.ivarrace.gringotts.domain.accountancy;
 
+import com.ivarrace.gringotts.domain.summary.AnnualSummary;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,4 +16,6 @@ public class Category {
     private LocalDateTime lastModified;
     private String name;
     private Group group;
+
+    private AnnualSummary annualSummary;
 }

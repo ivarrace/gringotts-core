@@ -9,7 +9,9 @@ import com.ivarrace.gringotts.domain.accountancy.Movement;
 import com.ivarrace.gringotts.domain.exception.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class MovementService {
@@ -30,9 +32,11 @@ public class MovementService {
         this.accountancyUserRoleChecker = accountancyUserRoleChecker;
     }
 
-    public List<Movement> findAll(String accountancyKey, String groupKey, GroupType groupType, String categoryKey, Integer monthOrdinal, Integer year) {
+    public List<Movement> findAll(Optional<String> accountancyKey, Optional<String> groupKey,
+                                  Optional<GroupType> groupType, Optional<String> categoryKey,
+                                  Optional<Month> month, Optional<Integer> year) {
         return movementRepositoryPort.findAll(
-                accountancyKey, groupType, groupKey, categoryKey, monthOrdinal, year, authPort.getCurrentUser());
+                accountancyKey, groupType, groupKey, categoryKey, month.isPresent() ? Optional.of(month.get().getValue()) : Optional.empty(), year, authPort.getCurrentUser());
     }
 
     public Movement findById(String movementId) {
@@ -46,7 +50,7 @@ public class MovementService {
     public Movement create(Movement movement) {
         accountancyUserRoleChecker.validatePermission(movement.getCategory().getGroup().getAccountancy().getKey(),
                 AccountancyUserRoleType.EDITOR);
-        Category category = categoryService.findByKeyInGroup(movement.getCategory().getKey(),
+       Category category = categoryService.findByKeyInGroup(movement.getCategory().getKey(),
                 movement.getCategory().getGroup().getKey(), movement.getCategory().getGroup().getType(),
                 movement.getCategory().getGroup().getAccountancy().getKey());
         movement.setCategory(category);

@@ -17,10 +17,13 @@ public class AccountancyService {
 
     private final AccountancyRepositoryPort accountancyRepositoryPort;
     private final AuthPort authPort;
+    private final SummaryService summaryService;
 
-    public AccountancyService(AccountancyRepositoryPort accountancyRepositoryPort, AuthPort authPort) {
+    public AccountancyService(AccountancyRepositoryPort accountancyRepositoryPort, AuthPort authPort,
+                              SummaryService summaryService) {
         this.accountancyRepositoryPort = accountancyRepositoryPort;
         this.authPort = authPort;
+        this.summaryService = summaryService;
     }
 
     public List<Accountancy> findAll() {
@@ -31,7 +34,12 @@ public class AccountancyService {
         return accountancyRepositoryPort.findByKeyAndUser(accountancyKey, authPort.getCurrentUser()).orElseThrow(() -> new ObjectNotFoundException(accountancyKey));
     }
 
-    public Accountancy create(Accountancy accountancy) throws ObjectAlreadyRegisteredException{
+    public Accountancy findByKeyWIthSummary(String accountancyKey, Optional<Integer> year) {
+        Accountancy accountancy = this.findByKey(accountancyKey);
+        return summaryService.generateAnnualSummaryForAccountancy(accountancy, year);
+    }
+
+    public Accountancy create(Accountancy accountancy) throws ObjectAlreadyRegisteredException {
         validateIfExists(accountancy);
         AccountancyUserRole userRole = new AccountancyUserRole();
         userRole.setUser(authPort.getCurrentUser());
@@ -40,7 +48,8 @@ public class AccountancyService {
         return accountancyRepositoryPort.save(accountancy);
     }
 
-    public Accountancy modifyByKey(String accountancyKey, Accountancy accountancy) throws ObjectNotFoundException, ObjectAlreadyRegisteredException {
+    public Accountancy modifyByKey(String accountancyKey, Accountancy accountancy) throws ObjectNotFoundException,
+            ObjectAlreadyRegisteredException {
         validateIfExists(accountancy);
         Accountancy existing = this.findByKey(accountancyKey);
         accountancy.setId(existing.getId());

@@ -16,6 +16,6 @@ public class AccountancyResponse {
     private String name;
     private List<GroupResponse> incomes;
     private List<GroupResponse> expenses;
-    private AnnualSummary summary;
+    private AnnualSummaryResponse annualSummary;
 
 }

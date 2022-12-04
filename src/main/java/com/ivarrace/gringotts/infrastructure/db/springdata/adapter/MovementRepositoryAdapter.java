@@ -26,49 +26,45 @@ public class MovementRepositoryAdapter implements MovementRepositoryPort {
     }
 
     @Override
-    public List<Movement> findAll(String accountancyKey, GroupType groupType, String groupKey, String categoryKey,
-                                  Integer monthOrdinal, Integer year, User currentUser) {
+    public List<Movement> findAll(Optional<String> accountancyKey, Optional<GroupType> groupType, Optional<String> groupKey, Optional<String> categoryKey,
+                                  Optional<Integer> monthOrdinal, Optional<Integer> year, User currentUser) {
         MovementEntity exampleMovement = new MovementEntity();
         CategoryEntity exampleCategory = new CategoryEntity();
         GroupEntity exampleGroup = new GroupEntity();
         AccountancyEntity exampleAccountancy = new AccountancyEntity();
-        if (categoryKey != null) {
-            exampleCategory.setKey(categoryKey);
-            exampleMovement.setCategory(exampleCategory);
-        }
-        if (groupType != null && groupKey != null) {
+        AccountancyUserEntity accountancyUser = new AccountancyUserEntity();
+        UserEntity user = new UserEntity();
+        user.setId(UUID.fromString(currentUser.getId()));
+        accountancyUser.setUser(user);
+        exampleAccountancy.setUsers(Collections.singletonList(accountancyUser));
+        exampleGroup.setAccountancy(exampleAccountancy);
 
-            exampleGroup.setKey(groupKey);
-            exampleGroup.setType(groupType.name());
-            exampleCategory.setGroup(exampleGroup);
-        }
-        if (accountancyKey != null) {
-            exampleAccountancy.setKey(accountancyKey);
-            AccountancyUserEntity accountancyUser = new AccountancyUserEntity();
-            UserEntity user = new UserEntity();
-            user.setId(UUID.fromString(currentUser.getId()));
-            accountancyUser.setUser(user);
-            exampleAccountancy.setUsers(Collections.singletonList(accountancyUser));
-            exampleGroup.setAccountancy(exampleAccountancy);
-        }
+        exampleCategory.setKey(categoryKey.orElse(null));
+        exampleMovement.setCategory(exampleCategory);
+
+        exampleGroup.setKey(groupKey.orElse(null));
+        exampleGroup.setType(groupType.isPresent() ? groupType.get().name() : null);
+        exampleCategory.setGroup(exampleGroup);
+
+        exampleAccountancy.setKey(accountancyKey.orElse(null));
 
         Example<MovementEntity> example = Example.of(exampleMovement);
-        List<MovementEntity> result; //TODO filter in query bu dates
-        if(year==null){
-            if(monthOrdinal==null){
+        List<MovementEntity> result; //TODO filter in query by dates
+        if(!year.isPresent()){
+            if(!monthOrdinal.isPresent()){
                 result = Streamable.of(springDataMovementRepository.findAll(example)).toList();
             } else {
                 result = Streamable.of(springDataMovementRepository.findAll(example))
-                        .filter(movementEntity -> movementEntity.getDate().getMonth().equals(Month.of(monthOrdinal)))
+                        .filter(movementEntity -> movementEntity.getDate().getMonth().equals(Month.of(monthOrdinal.get())))
                         .toList();
             }
         } else {
-            if(monthOrdinal==null){
+            if(!monthOrdinal.isPresent()){
                 result = Streamable.of(springDataMovementRepository.findAll(example))
-                        .filter(movementEntity -> movementEntity.getDate().getYear()==year)
+                        .filter(movementEntity -> movementEntity.getDate().getYear()==year.get())
                         .toList();
             } else {
-                YearMonth findInDate = YearMonth.of(year, Month.of(monthOrdinal));
+                YearMonth findInDate = YearMonth.of(year.get(), Month.of(monthOrdinal.get()));
                 result = Streamable.of(springDataMovementRepository.findAll(example))
                         .filter(movementEntity -> YearMonth.from(movementEntity.getDate()).equals(findInDate))
                         .toList();

@@ -1,11 +1,7 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.application.service.AccountancyService;
-import com.ivarrace.gringotts.application.service.ReportService;
-import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.AccountancyResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.CategoryResponse;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.GroupResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.NewAccountancyCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.AccountancyMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController()
 @RequiredArgsConstructor
@@ -23,7 +20,6 @@ import java.util.List;
 public class AccountancyController {
 
     private final AccountancyService accountancyServer;
-    private final ReportService reportService;
 
     @GetMapping("/")
     public ResponseEntity<List<AccountancyResponse>> getAll() {
@@ -44,24 +40,9 @@ public class AccountancyController {
     }
 
     @GetMapping("/{accountancyKey}/summary")
-    public ResponseEntity<AccountancyResponse> getSummaryByKey(@PathVariable String accountancyKey) {
-        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findByKey(accountancyKey));
-        Integer year = null;
-        Integer monthOrdinal = null;
-        //TODO move from controller to service
-        response.setSummary(reportService.generateByAccountancy(accountancyKey, year, monthOrdinal));
-        for (GroupResponse group: response.getExpenses()) {
-            group.setSummary(reportService.generateByGroup(accountancyKey, GroupType.EXPENSES, group.getKey(), year, monthOrdinal));
-            for(CategoryResponse category: group.getCategories()){
-                category.setSummary(reportService.generateByCategory(accountancyKey, GroupType.EXPENSES, group.getKey(), category.getKey(),  year, monthOrdinal));
-            }
-        }
-        for (GroupResponse group: response.getIncomes()) {
-            group.setSummary(reportService.generateByGroup(accountancyKey, GroupType.INCOMES, group.getKey(),  year, monthOrdinal));
-            for(CategoryResponse category: group.getCategories()){
-                category.setSummary(reportService.generateByCategory(accountancyKey, GroupType.INCOMES, group.getKey(), category.getKey(),  year, monthOrdinal));
-            }
-        }
+    public ResponseEntity<AccountancyResponse> getSummaryByKey(@PathVariable String accountancyKey,
+                                                               @RequestParam Optional<Integer> year) {
+        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findByKeyWIthSummary(accountancyKey, year));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

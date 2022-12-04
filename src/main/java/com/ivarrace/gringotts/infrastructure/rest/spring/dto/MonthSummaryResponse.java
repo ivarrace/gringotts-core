@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.Month;
 
 @Getter
 @Setter
-public class AnnualSummary {
+public class MonthSummaryResponse {
+    private Month month;
     private BigDecimal total;
-    private BigDecimal average;
-    private List<MonthResume> monthly;
+
 }

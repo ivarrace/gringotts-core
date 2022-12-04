@@ -1,5 +1,6 @@
 package com.ivarrace.gringotts.domain.accountancy;
 
+import com.ivarrace.gringotts.domain.summary.AnnualSummary;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,4 +19,6 @@ public class Group {
     private List<Category> categories;
     private GroupType type;
     private Accountancy accountancy;
+
+    private AnnualSummary annualSummary;
 }
