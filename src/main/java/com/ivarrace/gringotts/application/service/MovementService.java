@@ -17,16 +17,15 @@ import java.util.Optional;
 @Slf4j
 public class MovementService {
 
+    private final AuthPort authPort;
+    private final CategoryService categoryService;
+    private final AccountancyUserRoleChecker accountancyUserRoleChecker;
     private final MovementRepositoryPort movementRepositoryPort;
 
-    private final AuthPort authPort;
-
-    private final AccountancyUserRoleChecker accountancyUserRoleChecker;
-
-    private final CategoryService categoryService;
-
-    public MovementService(MovementRepositoryPort movementRepositoryPort, CategoryService categoryService,
-                           AuthPort authPort, AccountancyUserRoleChecker accountancyUserRoleChecker) {
+    public MovementService(AuthPort authPort,
+                           CategoryService categoryService,
+                           AccountancyUserRoleChecker accountancyUserRoleChecker,
+                           MovementRepositoryPort movementRepositoryPort) {
         this.movementRepositoryPort = movementRepositoryPort;
         this.categoryService = categoryService;
         this.authPort = authPort;
@@ -43,13 +42,13 @@ public class MovementService {
     public Movement findOne(String movementId) {
         Movement movement =
                 movementRepositoryPort.findById(movementId).orElseThrow(() -> new ObjectNotFoundException(movementId));
-        accountancyUserRoleChecker.validatePermission(movement.getCategory().getGroup().getAccountancy().getKey(),
+        accountancyUserRoleChecker.hasPermission(movement.getCategory().getGroup().getAccountancy().getKey(),
                 AccountancyUserRoleType.VIEWER);
         return movement;
     }
 
     public Movement create(Movement movement) {
-        accountancyUserRoleChecker.validatePermission(movement.getCategory().getGroup().getAccountancy().getKey(),
+        accountancyUserRoleChecker.hasPermission(movement.getCategory().getGroup().getAccountancy().getKey(),
                 AccountancyUserRoleType.EDITOR);
         Category category = categoryService.findOne(
                 movement.getCategory().getGroup().getAccountancy().getKey(),
@@ -63,7 +62,7 @@ public class MovementService {
 
     public Movement modify(String movementId, Movement movement) throws ObjectNotFoundException {
         Movement existing = this.findOne(movementId);
-        accountancyUserRoleChecker.validatePermission(existing.getCategory().getGroup().getAccountancy().getKey(),
+        accountancyUserRoleChecker.hasPermission(existing.getCategory().getGroup().getAccountancy().getKey(),
                 AccountancyUserRoleType.EDITOR);
         movement.setId(existing.getId());
         movement.setCategory(existing.getCategory());
@@ -72,7 +71,7 @@ public class MovementService {
 
     public void delete(String movementId) throws ObjectNotFoundException {
         Movement existing = this.findOne(movementId);
-        accountancyUserRoleChecker.validatePermission(existing.getCategory().getGroup().getAccountancy().getKey(),
+        accountancyUserRoleChecker.hasPermission(existing.getCategory().getGroup().getAccountancy().getKey(),
                 AccountancyUserRoleType.EDITOR);
         movementRepositoryPort.delete(existing);
     }

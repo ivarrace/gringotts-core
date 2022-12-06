@@ -48,8 +48,4 @@ public class AccountancyUserRoleChecker {
         }
     }
 
-    public void validatePermission(String accountancyKey, AccountancyUserRoleType accountancyUserRoleType) {
-        hasPermission(accountancyKey, accountancyUserRoleType);
-    }
-
 }
