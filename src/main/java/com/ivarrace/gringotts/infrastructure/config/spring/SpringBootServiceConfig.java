@@ -5,16 +5,14 @@ import com.ivarrace.gringotts.infrastructure.db.springdata.adapter.*;
 import com.ivarrace.gringotts.infrastructure.security.spring.adapter.SpringContextAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class SpringBootServiceConfig {
 
     @Bean
     public AccountancyService accountancyService(SpringContextAdapter springContextAdapter,
-                                                 AccountancyRepositoryAdapter accountancyRepositoryAdapter,
-                                                 SummaryService summaryService) {
-        return new AccountancyService(springContextAdapter, accountancyRepositoryAdapter, summaryService);
+                                                 AccountancyRepositoryAdapter accountancyRepositoryAdapter) {
+        return new AccountancyService(springContextAdapter, accountancyRepositoryAdapter);
     }
 
     @Bean
@@ -31,9 +29,9 @@ public class SpringBootServiceConfig {
         return new CategoryService(springContextAdapter, groupService, categoryRepositoryAdapter);
     }
 
-    @Bean //TODO fix Lazy
+    @Bean
     public MovementService movementService(SpringContextAdapter springContextAdapter,
-                                           @Lazy CategoryService categoryService,
+                                           CategoryService categoryService,
                                            MovementRepositoryAdapter movementRepositoryAdapter) {
         return new MovementService(springContextAdapter, categoryService, movementRepositoryAdapter);
     }
@@ -50,8 +48,9 @@ public class SpringBootServiceConfig {
     }
 
     @Bean
-    public SummaryService summaryService(MovementService movementService) {
-        return new SummaryService(movementService);
+    public SummaryService summaryService(AccountancyService accountancyService,
+                                         MovementService movementService) {
+        return new SummaryService(accountancyService, movementService);
     }
 
 }

@@ -27,7 +27,6 @@ class AccountancyServiceTest {
     private static final User MOCK_USER = new User();
     private AccountancyRepositoryPort accountancyRepositoryPortMock;
     private AuthPort authPortMock;
-    private SummaryService summaryServiceMock;
 
     private AccountancyService accountancyService;
 
@@ -35,8 +34,7 @@ class AccountancyServiceTest {
     public void init() {
         accountancyRepositoryPortMock = mock(AccountancyRepositoryPort.class);
         authPortMock = mock(AuthPort.class);
-        summaryServiceMock = mock(SummaryService.class);
-        accountancyService = new AccountancyService(authPortMock, accountancyRepositoryPortMock, summaryServiceMock);
+        accountancyService = new AccountancyService(authPortMock, accountancyRepositoryPortMock);
         when(authPortMock.getCurrentUser()).thenReturn(MOCK_USER);
     }
 
@@ -156,27 +154,4 @@ class AccountancyServiceTest {
         verifyNoMoreInteractions(accountancyRepositoryPortMock);
     }
 
-    @Test
-    void findByKeyWithSummary_definedYear() {
-        Optional<Year> year = Optional.empty();
-        Accountancy accountancy = FakerGenerator.fakerAccountancy();
-        accountancy.setAnnualSummary(new AnnualSummary());
-        when(accountancyRepositoryPortMock.findOne(MOCK_USER, accountancy.getKey())).thenReturn(Optional.of(accountancy));
-        when(summaryServiceMock.generateAnnualSummaryForAccountancy(accountancy, year)).thenReturn(accountancy);
-        Accountancy result = accountancyService.findOneWithSummary(accountancy.getKey(), year);
-        assertNotNull(result);
-        assertAll("Expected values", () -> assertEquals(accountancy.getId(), result.getId()),
-                () -> assertEquals(accountancy.getKey(), result.getKey()),
-                () -> assertEquals(accountancy.getCreatedDate(), result.getCreatedDate()),
-                () -> assertEquals(accountancy.getLastModified(), result.getLastModified()),
-                () -> assertEquals(accountancy.getName(), result.getName()),
-                () -> assertEquals(accountancy.getIncomes().size(), result.getIncomes().size()),
-                () -> assertEquals(accountancy.getExpenses().size(), result.getExpenses().size()),
-                () -> assertTrue(result.getUsers().isEmpty()),
-                () -> assertNotNull(result.getAnnualSummary())
-        );
-        verify(accountancyRepositoryPortMock, times(1)).findOne(MOCK_USER, accountancy.getKey());
-        verify(summaryServiceMock, times(1)).generateAnnualSummaryForAccountancy(accountancy, year);
-        verifyNoMoreInteractions(accountancyRepositoryPortMock, summaryServiceMock);
-    }
 }

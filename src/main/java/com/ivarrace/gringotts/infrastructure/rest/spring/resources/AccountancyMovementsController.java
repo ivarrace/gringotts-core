@@ -21,7 +21,7 @@ import java.util.Optional;
 @RestController()
 @RequiredArgsConstructor
 @RequestMapping("/api/accountancy/{accountancyKey}/movements")
-public class MovementController {
+public class AccountancyMovementsController {
 
     private final MovementService movementService;
 

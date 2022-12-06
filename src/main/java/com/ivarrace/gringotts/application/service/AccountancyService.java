@@ -9,7 +9,6 @@ import com.ivarrace.gringotts.domain.exception.ObjectAlreadyRegisteredException;
 import com.ivarrace.gringotts.domain.exception.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,14 +17,11 @@ public class AccountancyService {
 
     private final AuthPort authPort;
     private final AccountancyRepositoryPort accountancyRepositoryPort;
-    private final SummaryService summaryService;
 
     public AccountancyService(AuthPort authPort,
-                              AccountancyRepositoryPort accountancyRepositoryPort,
-                              SummaryService summaryService) {
+                              AccountancyRepositoryPort accountancyRepositoryPort) {
         this.accountancyRepositoryPort = accountancyRepositoryPort;
         this.authPort = authPort;
-        this.summaryService = summaryService;
     }
 
     public List<Accountancy> findAll() {
@@ -34,11 +30,6 @@ public class AccountancyService {
 
     public Accountancy findOne(String accountancyKey) {
         return accountancyRepositoryPort.findOne(authPort.getCurrentUser(), accountancyKey).orElseThrow(() -> new ObjectNotFoundException(accountancyKey));
-    }
-
-    public Accountancy findOneWithSummary(String accountancyKey, Optional<Year> year) {
-        Accountancy accountancy = this.findOne(accountancyKey);
-        return summaryService.generateAnnualSummaryForAccountancy(accountancy, year);
     }
 
     public Accountancy create(Accountancy accountancy) throws ObjectAlreadyRegisteredException {

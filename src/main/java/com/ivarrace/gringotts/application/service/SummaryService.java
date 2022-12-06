@@ -18,31 +18,47 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SummaryService {
 
+    private final AccountancyService accountancyService;
     private final MovementService movementService;
 
-    public SummaryService(MovementService movementService) {
+    public SummaryService(AccountancyService accountancyService, MovementService movementService) {
+        this.accountancyService = accountancyService;
         this.movementService = movementService;
     }
 
-    public Accountancy generateAnnualSummaryForAccountancy(Accountancy accountancy, Optional<Year> year) {
+    public Accountancy getAccountancyWithSummary(String accountancyKey, Optional<Year> year) {
+        Accountancy accountancy = accountancyService.findOne(accountancyKey);
         Year searchByYear = year.orElse(Year.of(LocalDate.now().getYear()));
-        List<Movement> accountancyMovements =
-                movementService.findAll(accountancy.getKey(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(searchByYear));
+        generateAnnualSummaryForAccountancy(accountancy, searchByYear);
+        return accountancy;
+    }
 
-        accountancy.setAnnualSummary(generateAnnualSummary(accountancyMovements, searchByYear));
-        for(Group group : accountancy.getExpenses()){
-            List<Movement> groupMovements = accountancyMovements.stream()
+    private void generateAnnualSummaryForAccountancy(Accountancy accountancy, Year year) {
+        List<Movement> accountancyMovements =
+                movementService.findAll(accountancy.getKey(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(year));
+        accountancy.setAnnualSummary(generateAnnualSummary(accountancyMovements, year));
+        generateAnnualSummaryForGroups(accountancy.getExpenses(), accountancyMovements, year);
+        generateAnnualSummaryForGroups(accountancy.getIncomes(), accountancyMovements, year);
+    }
+
+    private void generateAnnualSummaryForGroups(List<Group> groupList, List<Movement> movements, Year year) {
+        for(Group group : groupList){
+            List<Movement> groupMovements = movements.stream()
                     .filter(movement -> movement.getCategory().getGroup().getKey().equals(group.getKey()))
                     .collect(Collectors.toList());
-            group.setAnnualSummary(generateAnnualSummary(groupMovements, searchByYear));
-            for(Category category : group.getCategories()){
-                List<Movement> categoryMovements = groupMovements.stream()
-                        .filter(movement -> movement.getCategory().getKey().equals(category.getKey()))
-                        .collect(Collectors.toList());
-                category.setAnnualSummary(generateAnnualSummary(categoryMovements, searchByYear));
-            }
+            group.setAnnualSummary(generateAnnualSummary(groupMovements, year));
+            generateAnnualSummaryForCategories(group.getCategories(), groupMovements, year);
+
         }
-        return accountancy;
+    }
+
+    private void generateAnnualSummaryForCategories(List<Category> categoryList, List<Movement> groupMovements, Year year) {
+        for(Category category : categoryList){
+            List<Movement> categoryMovements = groupMovements.stream()
+                    .filter(movement -> movement.getCategory().getKey().equals(category.getKey()))
+                    .collect(Collectors.toList());
+            category.setAnnualSummary(generateAnnualSummary(categoryMovements, year));
+        }
     }
 
     private AnnualSummary generateAnnualSummary(List<Movement> movements, Year year){
@@ -63,4 +79,5 @@ public class SummaryService {
                     return MonthSummary.builder().month(monthItem).total(BigDecimal.valueOf(monthValues).setScale(2, RoundingMode.HALF_UP)).build();
                 }).collect(Collectors.toList());
     }
+
 }

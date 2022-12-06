@@ -1,8 +1,8 @@
 package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.application.service.AccountancyService;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.AccountancyResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewAccountancyCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.AccountancyResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.AccountancyMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,9 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.Year;
 import java.util.List;
-import java.util.Optional;
 
 @RestController()
 @RequiredArgsConstructor
@@ -37,13 +35,6 @@ public class AccountancyController {
     @GetMapping("/{accountancyKey}")
     public ResponseEntity<AccountancyResponse> getByKey(@PathVariable String accountancyKey) {
         AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findOne(accountancyKey));
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/{accountancyKey}/summary")
-    public ResponseEntity<AccountancyResponse> getSummaryByKey(@PathVariable String accountancyKey,
-                                                               @RequestParam Optional<Year> year) {
-        AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findOneWithSummary(accountancyKey, year));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
