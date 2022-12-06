@@ -13,9 +13,6 @@ import java.time.LocalDate;
 @Setter
 public class NewMovementCommand {
 
-  @NotEmpty(message = "accountancyKey empty value")
-  private String accountancyKey;
-
   @NotNull(message = "groupType empty value")
   private GroupType groupType;
 

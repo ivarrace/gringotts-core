@@ -34,9 +34,8 @@ public class SpringBootServiceConfig {
     @Bean //TODO fix Lazy
     public MovementService movementService(SpringContextAdapter springContextAdapter,
                                            @Lazy CategoryService categoryService,
-                                           @Lazy AccountancyUserRoleChecker accountancyUserRoleChecker,
                                            MovementRepositoryAdapter movementRepositoryAdapter) {
-        return new MovementService(springContextAdapter, categoryService, accountancyUserRoleChecker, movementRepositoryAdapter);
+        return new MovementService(springContextAdapter, categoryService, movementRepositoryAdapter);
     }
 
     @Bean

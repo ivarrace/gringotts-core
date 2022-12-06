@@ -25,7 +25,6 @@ public interface MovementMapper {
     @Mapping(target = "category.key", source = "command.categoryKey")
     @Mapping(target = "category.group.key", source = "command.groupKey")
     @Mapping(target = "category.group.type", source = "command.groupType")
-    @Mapping(target = "category.group.accountancy.key", source = "command.accountancyKey")
     Movement toDomain(NewMovementCommand command);
 
     Movement toDomain(UpdateMovementCommand command);

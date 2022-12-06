@@ -27,7 +27,7 @@ public class SummaryService {
     public Accountancy generateAnnualSummaryForAccountancy(Accountancy accountancy, Optional<Year> year) {
         Year searchByYear = year.orElse(Year.of(LocalDate.now().getYear()));
         List<Movement> accountancyMovements =
-                movementService.findAll(Optional.of(accountancy.getKey()), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(searchByYear));
+                movementService.findAll(accountancy.getKey(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(searchByYear));
 
         accountancy.setAnnualSummary(generateAnnualSummary(accountancyMovements, searchByYear));
         for(Group group : accountancy.getExpenses()){

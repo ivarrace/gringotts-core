@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface MovementRepositoryPort {
 
-    List<Movement> findAll(Optional<String> accountancyKey, Optional<GroupType> groupType, Optional<String> groupKey,
+    List<Movement> findAll(String accountancyKey, Optional<GroupType> groupType, Optional<String> groupKey,
                            Optional<String> categoryKey,
                            Optional<Month> month, Optional<Year> year, User currentUser);
 

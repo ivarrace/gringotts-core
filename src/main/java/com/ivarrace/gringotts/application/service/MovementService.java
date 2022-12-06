@@ -2,7 +2,6 @@ package com.ivarrace.gringotts.application.service;
 
 import com.ivarrace.gringotts.application.ports.data.MovementRepositoryPort;
 import com.ivarrace.gringotts.application.ports.security.AuthPort;
-import com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType;
 import com.ivarrace.gringotts.domain.accountancy.Category;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
 import com.ivarrace.gringotts.domain.accountancy.Movement;
@@ -19,20 +18,17 @@ public class MovementService {
 
     private final AuthPort authPort;
     private final CategoryService categoryService;
-    private final AccountancyUserRoleChecker accountancyUserRoleChecker;
     private final MovementRepositoryPort movementRepositoryPort;
 
     public MovementService(AuthPort authPort,
                            CategoryService categoryService,
-                           AccountancyUserRoleChecker accountancyUserRoleChecker,
                            MovementRepositoryPort movementRepositoryPort) {
         this.movementRepositoryPort = movementRepositoryPort;
         this.categoryService = categoryService;
         this.authPort = authPort;
-        this.accountancyUserRoleChecker = accountancyUserRoleChecker;
     }
 
-    public List<Movement> findAll(Optional<String> accountancyKey, Optional<String> groupKey,
+    public List<Movement> findAll(String accountancyKey, Optional<String> groupKey,
                                   Optional<GroupType> groupType, Optional<String> categoryKey,
                                   Optional<Month> month, Optional<Year> year) {
         return movementRepositoryPort.findAll(
@@ -40,18 +36,12 @@ public class MovementService {
     }
 
     public Movement findOne(String movementId) {
-        Movement movement =
-                movementRepositoryPort.findById(movementId).orElseThrow(() -> new ObjectNotFoundException(movementId));
-        accountancyUserRoleChecker.hasPermission(movement.getCategory().getGroup().getAccountancy().getKey(),
-                AccountancyUserRoleType.VIEWER);
-        return movement;
+        return movementRepositoryPort.findById(movementId).orElseThrow(() -> new ObjectNotFoundException(movementId));
     }
 
-    public Movement create(Movement movement) {
-        accountancyUserRoleChecker.hasPermission(movement.getCategory().getGroup().getAccountancy().getKey(),
-                AccountancyUserRoleType.EDITOR);
+    public Movement create(String accountancyKey, Movement movement) {
         Category category = categoryService.findOne(
-                movement.getCategory().getGroup().getAccountancy().getKey(),
+                accountancyKey,
                 movement.getCategory().getGroup().getType(),
                 movement.getCategory().getGroup().getKey(),
                 movement.getCategory().getKey());
@@ -62,8 +52,6 @@ public class MovementService {
 
     public Movement modify(String movementId, Movement movement) throws ObjectNotFoundException {
         Movement existing = this.findOne(movementId);
-        accountancyUserRoleChecker.hasPermission(existing.getCategory().getGroup().getAccountancy().getKey(),
-                AccountancyUserRoleType.EDITOR);
         movement.setId(existing.getId());
         movement.setCategory(existing.getCategory());
         return movementRepositoryPort.save(movement);
@@ -71,8 +59,6 @@ public class MovementService {
 
     public void delete(String movementId) throws ObjectNotFoundException {
         Movement existing = this.findOne(movementId);
-        accountancyUserRoleChecker.hasPermission(existing.getCategory().getGroup().getAccountancy().getKey(),
-                AccountancyUserRoleType.EDITOR);
         movementRepositoryPort.delete(existing);
     }
 }

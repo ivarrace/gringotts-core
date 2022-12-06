@@ -29,10 +29,10 @@ public class MovementRepositoryAdapter implements MovementRepositoryPort {
     }
 
     @Override
-    public List<Movement> findAll(Optional<String> accountancyKey, Optional<GroupType> groupType,
+    public List<Movement> findAll(String accountancyKey, Optional<GroupType> groupType,
                                   Optional<String> groupKey, Optional<String> categoryKey,
                                   Optional<Month> month, Optional<Year> year, User currentUser) {
-        Example<MovementEntity> example = ExampleGenerator.getMovementExample(currentUser, accountancyKey, groupType,
+        Example<MovementEntity> example = ExampleGenerator.getMovementExample(currentUser, Optional.of(accountancyKey), groupType,
                 groupKey, categoryKey, Optional.empty());
         List<MovementEntity> result = Streamable.of(springDataMovementRepository.findAll(example)).toList();
         return MovementEntityMapper.toDomainList(filterBy(result, month, year));

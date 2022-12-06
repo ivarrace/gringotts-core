@@ -2,13 +2,14 @@ package com.ivarrace.gringotts.infrastructure.rest.spring.resources;
 
 import com.ivarrace.gringotts.application.service.MovementService;
 import com.ivarrace.gringotts.domain.accountancy.GroupType;
-import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.MovementResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewMovementCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.UpdateMovementCommand;
+import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.MovementResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.MovementMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,13 +20,14 @@ import java.util.Optional;
 
 @RestController()
 @RequiredArgsConstructor
-@RequestMapping("/api/movements")
+@RequestMapping("/api/accountancy/{accountancyKey}/movements")
 public class MovementController {
 
     private final MovementService movementService;
 
     @GetMapping("/")
-    public ResponseEntity<List<MovementResponse>> getAllMovements(@RequestParam Optional<String> accountancyKey,
+    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
+    public ResponseEntity<List<MovementResponse>> getAllMovements(@PathVariable String accountancyKey,
                                                                   @RequestParam Optional<String> groupKey,
                                                                   @RequestParam Optional<GroupType> groupType,
                                                                   @RequestParam Optional<String> categoryKey,
@@ -39,20 +41,26 @@ public class MovementController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<MovementResponse> save(@Valid @RequestBody NewMovementCommand command) {
+    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
+    public ResponseEntity<MovementResponse> save(@PathVariable String accountancyKey,
+                                                 @Valid @RequestBody NewMovementCommand command) {
         MovementResponse response =
-                MovementMapper.INSTANCE.toResponse(movementService.create(MovementMapper.INSTANCE.toDomain(command)));
+                MovementMapper.INSTANCE.toResponse(movementService.create(accountancyKey, MovementMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{movementId}")
-    public ResponseEntity<MovementResponse> getMovementById(@PathVariable String movementId) {
+    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).VIEWER)")
+    public ResponseEntity<MovementResponse> getMovementById(@PathVariable String accountancyKey,
+                                                            @PathVariable String movementId) {
         MovementResponse response = MovementMapper.INSTANCE.toResponse(movementService.findOne(movementId));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{movementId}")
-    public ResponseEntity<MovementResponse> modifyMovement(@PathVariable String movementId,
+    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
+    public ResponseEntity<MovementResponse> modifyMovement(@PathVariable String accountancyKey,
+                                                           @PathVariable String movementId,
                                                            @RequestBody UpdateMovementCommand command) {
         MovementResponse response = MovementMapper.INSTANCE.toResponse(movementService.modify(movementId,
                 MovementMapper.INSTANCE.toDomain(command)));
@@ -60,7 +68,9 @@ public class MovementController {
     }
 
     @DeleteMapping("/{movementId}")
-    public ResponseEntity<MovementResponse> deleteMovement(@PathVariable String movementId) {
+    @PreAuthorize("@accountancyUserRoleChecker.hasPermission(#accountancyKey,T(com.ivarrace.gringotts.domain.accountancy.AccountancyUserRoleType).EDITOR)")
+    public ResponseEntity<MovementResponse> deleteMovement(@PathVariable String accountancyKey,
+                                                           @PathVariable String movementId) {
         movementService.delete(movementId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
