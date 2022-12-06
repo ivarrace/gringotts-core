@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Month;
 import java.time.Year;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MovementRepositoryAdapter implements MovementRepositoryPort {
@@ -34,30 +34,19 @@ public class MovementRepositoryAdapter implements MovementRepositoryPort {
                                   Optional<Month> month, Optional<Year> year, User currentUser) {
         Example<MovementEntity> example = ExampleGenerator.getMovementExample(currentUser, accountancyKey, groupType,
                 groupKey, categoryKey, Optional.empty());
-        List<MovementEntity> result; //TODO filter in query by dates
-        if (!year.isPresent()) {
-            if (!month.isPresent()) {
-                result = Streamable.of(springDataMovementRepository.findAll(example)).toList();
-            } else {
-                result = Streamable.of(springDataMovementRepository.findAll(example))
-                        .filter(movementEntity -> movementEntity.getDate().getMonth().equals(month.get()))
-                        .toList();
-            }
-        } else {
-            if (!month.isPresent()) {
-                result = Streamable.of(springDataMovementRepository.findAll(example))
-                        .filter(movementEntity -> movementEntity.getDate().getYear() == year.get().getValue())
-                        .toList();
-            } else {
-                YearMonth findInDate = YearMonth.of(year.get().getValue(), month.get());
-                result = Streamable.of(springDataMovementRepository.findAll(example))
-                        .filter(movementEntity -> YearMonth.from(movementEntity.getDate()).equals(findInDate))
-                        .toList();
-            }
+        List<MovementEntity> result = Streamable.of(springDataMovementRepository.findAll(example)).toList();
+        return MovementEntityMapper.toDomainList(filterBy(result, month, year));
+
+    }
+
+    private List<MovementEntity> filterBy(List<MovementEntity> movements, Optional<Month> month, Optional<Year> year){
+        if(year.isPresent()) {
+            movements = movements.stream().filter(movementEntity -> movementEntity.getDate().getYear() == year.get().getValue()).collect(Collectors.toList());
         }
-
-        return MovementEntityMapper.toDomainList(result);
-
+        if(month.isPresent()){
+            movements = movements.stream().filter(movementEntity -> movementEntity.getDate().getMonth().equals(month.get())).collect(Collectors.toList());
+        }
+        return movements;
     }
 
     @Override

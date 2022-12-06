@@ -31,7 +31,6 @@ public class MovementController {
                                                                   @RequestParam Optional<String> categoryKey,
                                                                   @RequestParam Optional<Integer> monthOrdinal,
                                                                   @RequestParam Optional<Year> year) {
-        //TODO pageable
         Optional<Month> month = monthOrdinal.isPresent() ? Optional.of(Month.of(monthOrdinal.get())) : Optional.empty();
         List<MovementResponse> response =
                 MovementMapper.INSTANCE.toResponse(movementService.findAll(accountancyKey, groupKey, groupType,

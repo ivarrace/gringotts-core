@@ -26,8 +26,8 @@ public class FakerGenerator {
         entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
         entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(42, 10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setLastModified(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
-        entity.setGroups(Collections.emptyList()); //TODO
-        entity.setUsers(Collections.emptyList()); //TODO
+        entity.setGroups(Collections.emptyList());
+        entity.setUsers(Collections.emptyList());
         return entity;
     }
 
@@ -38,9 +38,9 @@ public class FakerGenerator {
         entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
         entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(42, 10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setLastModified(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
-        entity.setIncomes(Collections.emptyList()); //TODO
-        entity.setExpenses(Collections.emptyList()); //TODO
-        entity.setUsers(Collections.emptyList()); //TODO
+        entity.setIncomes(Collections.emptyList());
+        entity.setExpenses(Collections.emptyList());
+        entity.setUsers(Collections.emptyList());
         return entity;
     }
 
@@ -52,7 +52,7 @@ public class FakerGenerator {
         entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setType(optionFromEnum(GroupType.class).name());
         entity.setAccountancy(fakerAccountancyEntity());
-        entity.setCategories(Collections.emptyList()); //TODO
+        entity.setCategories(Collections.emptyList());
         return entity;
     }
 
@@ -64,7 +64,7 @@ public class FakerGenerator {
         entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setType(optionFromEnum(GroupType.class));
         entity.setAccountancy(fakerAccountancy());
-        entity.setCategories(Collections.emptyList()); //TODO
+        entity.setCategories(Collections.emptyList());
         return entity;
     }
 
@@ -75,7 +75,7 @@ public class FakerGenerator {
         entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
         entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setGroup(fakerGroupEntity());
-        entity.setMovements(Collections.emptyList()); //TODO
+        entity.setMovements(Collections.emptyList());
         return entity;
     }
 
