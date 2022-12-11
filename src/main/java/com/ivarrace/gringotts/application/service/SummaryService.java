@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class SummaryService {
@@ -73,11 +74,17 @@ public class SummaryService {
 
     private List<MonthSummary> generateMonthSummary(List<Movement> movements) {
         return Arrays.stream(Month.values()).map(monthItem -> {
-                    double monthValues = movements.stream()
-                            .filter(movement -> movement.getDate().getMonth().equals(monthItem))
-                            .mapToDouble(movement -> movement.getAmount().doubleValue()).sum();
-                    return MonthSummary.builder().month(monthItem).total(BigDecimal.valueOf(monthValues).setScale(2, RoundingMode.HALF_UP)).build();
-                }).collect(Collectors.toList());
+            List<Movement> monthMovements = movements.stream()
+                    .filter(movement -> movement.getDate().getMonth().equals(monthItem))
+                    .collect(Collectors.toList());
+            double expenses = monthMovements.stream().filter(movement -> GroupType.EXPENSES.equals(movement.getCategory().getGroup().getType())).mapToDouble(movement -> movement.getAmount().doubleValue()).sum();
+            double incomes = monthMovements.stream().filter(movement -> GroupType.INCOMES.equals(movement.getCategory().getGroup().getType())).mapToDouble(movement -> movement.getAmount().doubleValue()).sum();
+            return MonthSummary.builder()
+                    .month(monthItem)
+                    .expenses(BigDecimal.valueOf(expenses).setScale(2, RoundingMode.HALF_UP))
+                    .incomes(BigDecimal.valueOf(incomes).setScale(2, RoundingMode.HALF_UP))
+                    .total(BigDecimal.valueOf(incomes-expenses).setScale(2, RoundingMode.HALF_UP)).build();
+        }).collect(Collectors.toList());
     }
 
 }

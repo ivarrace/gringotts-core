@@ -14,4 +14,6 @@ public class MonthSummary {
 
     private Month month;
     private BigDecimal total;
+    private BigDecimal incomes;
+    private BigDecimal expenses;
 }
