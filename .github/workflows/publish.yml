@@ -16,13 +16,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Compile gringotts-core
-        run: |
-          mvn compile
-
       - name: Get version env variable
         run: |
           echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Compile gringotts-core
+        run: |
+          mvn compile
 
       - name: Build & Push gringotts-core Docker image
         run: |
