@@ -16,11 +16,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Package gringotts-core
+      - name: Compile gringotts-core
         run: |
-          mvn package
+          mvn compile
 
-      - name: Build & Push gringotts-core Docker image
+      - name: Get version
         run: |
-          docker build -t ghcr.io/ivarrace/gringotts-core:latest .
-          docker push ghcr.io/ivarrace/gringotts-core:latest
+          VERSION=$(  mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression='project.version' -q -DforceStdout )
+          echo "::set-output name=version::$VERSION"
+        id: get_version
+
+      - name: Build & Push gringotts-core:${VERSION} Docker image
+        run: |
+          docker build -t ghcr.io/ivarrace/gringotts-core:${VERSION} .
+          docker push ghcr.io/ivarrace/gringotts-core:${VERSION}
