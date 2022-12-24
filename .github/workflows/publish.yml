@@ -3,7 +3,7 @@ name: publish
 on: workflow_dispatch
 
 jobs:
-  publish-hello-world-image:
+  publish-gringotts-core-image:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,7 +16,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build the hello-world Docker image
+      - name: Package gringotts-core
+        run: |
+          mvn package
+
+      - name: Build & Push gringotts-core Docker image
         run: |
           docker build -t ghcr.io/ivarrace/gringotts-core:latest .
           docker push ghcr.io/ivarrace/gringotts-core:latest
