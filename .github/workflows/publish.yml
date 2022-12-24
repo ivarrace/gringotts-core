@@ -1,4 +1,4 @@
-name: publish
+name: Build & Publish
 
 on: workflow_dispatch
 
@@ -21,10 +21,10 @@ jobs:
           mvn compile
 
       - name: Get version env variable
-          run: |
-            echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+        run: |
+          echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
-      - name: Build & Push gringotts-core:${{ env.RELEASE_VERSION }} Docker image
+      - name: Build & Push gringotts-core Docker image
         run: |
           docker build -t ghcr.io/ivarrace/gringotts-core:${{ env.RELEASE_VERSION }} .
           docker push ghcr.io/ivarrace/gringotts-core:${{ env.RELEASE_VERSION }}
