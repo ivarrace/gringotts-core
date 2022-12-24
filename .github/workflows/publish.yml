@@ -20,13 +20,11 @@ jobs:
         run: |
           mvn compile
 
-      - name: Get version
-        run: |
-          VERSION=$(  mvn help:evaluate -Dexpression='project.version' -q -DforceStdout )
-          echo "::set-output name=version::$VERSION"
-        id: get_version
+      - name: Get version env variable
+          run: |
+            echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
-      - name: Build & Push gringotts-core:${VERSION} Docker image
+      - name: Build & Push gringotts-core:${{ env.RELEASE_VERSION }} Docker image
         run: |
-          docker build -t ghcr.io/ivarrace/gringotts-core:${VERSION} .
-          docker push ghcr.io/ivarrace/gringotts-core:${VERSION}
+          docker build -t ghcr.io/ivarrace/gringotts-core:${{ env.RELEASE_VERSION }} .
+          docker push ghcr.io/ivarrace/gringotts-core:${{ env.RELEASE_VERSION }}
