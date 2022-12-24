@@ -22,7 +22,7 @@ jobs:
 
       - name: Get version
         run: |
-          VERSION=$(  mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression='project.version' -q -DforceStdout )
+          VERSION=$(  mvn help:evaluate -Dexpression='project.version' -q -DforceStdout )
           echo "::set-output name=version::$VERSION"
         id: get_version
 
