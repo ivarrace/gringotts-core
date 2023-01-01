@@ -7,28 +7,28 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     env:
-      POSTGRES_USER: ${{ env.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-      JWT_SECRET: ${{ env.JWT_SECRET }}
+      POSTGRES_USER: ${{ secret.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secret.POSTGRES_PASSWORD }}
+      JWT_SECRET: ${{ secret.JWT_SECRET }}
 
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
           # VPS IP
-          host: ${{ env.VPS_SSH_HOST }}
+          host: ${{ secret.VPS_SSH_HOST }}
           # VPS username
-          username: ${{ env.VPS_SSH_USERNAME }}
+          username: ${{ secret.VPS_SSH_USERNAME }}
           # SSH key (copy it from your local machine)
-          key: ${{ env.VPS_SSH_SECRET }}
+          key: ${{ secret.VPS_SSH_SECRET }}
           # SSH port
-          port: ${{ env.VPS_SSH_PORT }}
+          port: ${{ secret.VPS_SSH_PORT }}
           # passphrase
           #passphrase: ${{ env.SSH_PASSPHRASE }}
 
           script: |
             echo "Moveing to project path..."
-            cd ${{ env.PROJECT_PATH }}
+            cd ${{ secret.PROJECT_PATH }}
             echo "Pull GitHub repo..."
             git pull origin main
             echo "Stoping containers..."
