@@ -11,7 +11,7 @@ jobs:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      
+
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
@@ -21,20 +21,13 @@ jobs:
           # VPS username
           username: ${{ secrets.VPS_SSH_USERNAME }}
           # SSH key (copy it from your local machine)
-          key: ${{ secrets.VPS_SSH_SECRET }}
+          password: ${{ secrets.VPS_SSH_SECRET }}
           # SSH port
           port: ${{ secrets.VPS_SSH_PORT }}
-          # passphrase
-          #passphrase: ${{ env.SSH_PASSPHRASE }}
 
           script: |
-            echo "Moveing to project path..."
             cd ${{ secrets.PROJECT_PATH }}
-            echo "Pull GitHub repo..."
             git pull origin main
-            echo "Stoping containers..."
             docker compose down
-            echo "Building containers..."
             docker compose up --build -d --remove-orphans
-            echo "Deleting old image(s)..."
             docker image prune -a -f
