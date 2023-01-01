@@ -12,13 +12,13 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           # VPS IP
-          host: ${{ secret.VPS_SSH_HOST }}
+          host: ${{ secrets.VPS_SSH_HOST }}
           # VPS username
-          username: ${{ secret.VPS_SSH_USERNAME }}
+          username: ${{ secrets.VPS_SSH_USERNAME }}
           # SSH key (copy it from your local machine)
-          key: ${{ secret.VPS_SSH_SECRET }}
+          key: ${{ secrets.VPS_SSH_SECRET }}
           # SSH port
-          port: ${{ secret.VPS_SSH_PORT }}
+          port: ${{ secrets.VPS_SSH_PORT }}
           # passphrase
           #passphrase: ${{ env.SSH_PASSPHRASE }}
 
@@ -30,6 +30,6 @@ jobs:
             echo "Stoping containers..."
             docker compose down
             echo "Building containers..."
-            docker compose up --build -d --remove-orphans -e 'POSTGRES_USER=${{ secret.POSTGRES_USER }}' -e "POSTGRES_PASSWORD=${{ secret.POSTGRES_PASSWORD }}" -e "JWT_SECRET=${{ secret.JWT_SECRET }}"
+            docker compose up --build -d --remove-orphans -e 'POSTGRES_USER=${{ secrets.POSTGRES_USER }}' -e "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" -e "JWT_SECRET=${{ secrets.JWT_SECRET }}"
             echo "Deleting old image(s)..."
             docker image prune -a -f
