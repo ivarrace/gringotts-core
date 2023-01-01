@@ -24,7 +24,7 @@ jobs:
 
           script: |
             echo "Moveing to project path..."
-            cd ${{ secret.PROJECT_PATH }}
+            cd ${{ secrets.PROJECT_PATH }}
             echo "Pull GitHub repo..."
             git pull origin main
             echo "Stoping containers..."
