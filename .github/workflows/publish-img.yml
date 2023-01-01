@@ -1,4 +1,4 @@
-name: Build & Publish - OLD
+name: Publish image on ghcr
 
 on: workflow_dispatch
 

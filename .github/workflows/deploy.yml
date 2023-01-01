@@ -1,4 +1,4 @@
-name: Build & Publish
+name: Deploy on VPS
 
 on: workflow_dispatch
 
