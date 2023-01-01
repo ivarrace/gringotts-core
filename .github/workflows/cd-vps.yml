@@ -7,6 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
 
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
@@ -21,11 +26,6 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           # passphrase
           #passphrase: ${{ env.SSH_PASSPHRASE }}
-
-          env:
-            POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-            JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
           script: |
             echo "Moveing to project path..."
