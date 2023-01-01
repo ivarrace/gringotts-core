@@ -22,6 +22,11 @@ jobs:
           # passphrase
           #passphrase: ${{ env.SSH_PASSPHRASE }}
 
+          env:
+            POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
           script: |
             echo "Moveing to project path..."
             cd ${{ secrets.PROJECT_PATH }}
@@ -30,6 +35,6 @@ jobs:
             echo "Stoping containers..."
             docker compose down
             echo "Building containers..."
-            docker compose up --build -d --remove-orphans -e 'POSTGRES_USER=${{ secrets.POSTGRES_USER }}' -e "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" -e "JWT_SECRET=${{ secrets.JWT_SECRET }}"
+            docker compose up --build -d --remove-orphans
             echo "Deleting old image(s)..."
             docker image prune -a -f
