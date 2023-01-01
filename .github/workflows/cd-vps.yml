@@ -1,4 +1,4 @@
-name: CD VPS
+name: Build & Publish
 
 on: workflow_dispatch
 
@@ -6,10 +6,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: staging
-    env:
-      POSTGRES_USER: ${{ secret.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secret.POSTGRES_PASSWORD }}
-      JWT_SECRET: ${{ secret.JWT_SECRET }}
 
     steps:
       - name: Deploy to VPS
@@ -34,6 +30,6 @@ jobs:
             echo "Stoping containers..."
             docker compose down
             echo "Building containers..."
-            docker compose up --build -d --remove-orphans -e 'POSTGRES_USER=$POSTGRES_USER' -e "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" -e "JWT_SECRET=$JWT_SECRET"
+            docker compose up --build -d --remove-orphans -e 'POSTGRES_USER=${{ secret.POSTGRES_USER }}' -e "POSTGRES_PASSWORD=${{ secret.POSTGRES_PASSWORD }}" -e "JWT_SECRET=${{ secret.JWT_SECRET }}"
             echo "Deleting old image(s)..."
             docker image prune -a -f
