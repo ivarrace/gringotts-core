@@ -22,7 +22,7 @@ Swagger - http://localhost:8080/swagger-ui/index.html
 docker build -t gringotts/gringotts-core:local .
 ```
 
-2. Run with db
+2. Run in docker with db
 ````bash
 docker compose up -d
 ````
