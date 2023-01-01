@@ -5,6 +5,7 @@ import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewAccounta
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.AccountancyResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.AccountancyMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController()
 @RequiredArgsConstructor
 @RequestMapping("/api/accountancy")
+@Slf4j
 public class AccountancyController {
 
     private final AccountancyService accountancyServer;

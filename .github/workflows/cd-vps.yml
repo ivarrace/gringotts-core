@@ -1,0 +1,39 @@
+name: CD VPS
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      POSTGRES_USER: ${{ env.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+      JWT_SECRET: ${{ env.JWT_SECRET }}
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          # VPS IP
+          host: ${{ env.VPS_SSH_HOST }}
+          # VPS username
+          username: ${{ env.VPS_SSH_USERNAME }}
+          # SSH key (copy it from your local machine)
+          key: ${{ env.VPS_SSH_SECRET }}
+          # SSH port
+          port: ${{ env.VPS_SSH_PORT }}
+          # passphrase
+          #passphrase: ${{ env.SSH_PASSPHRASE }}
+
+          script: |
+            echo "Moveing to project path..."
+            cd ${{ env.PROJECT_PATH }}
+            echo "Pull GitHub repo..."
+            git pull origin main
+            echo "Stoping containers..."
+            docker compose down
+            echo "Building containers..."
+            docker compose up --build -d --remove-orphans -e 'POSTGRES_USER=$POSTGRES_USER' -e "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" -e "JWT_SECRET=$JWT_SECRET"
+            echo "Deleting old image(s)..."
+            docker image prune -a -f

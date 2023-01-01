@@ -26,5 +26,5 @@ springdoc:
 #Auth jwt config
 ivarrace:
   jwt:
-    secret: "zdtlD3JK56m6wTTgsNFhqzjqP"
+    secret: "change-me"
     issuer: "ivarrace.com"
