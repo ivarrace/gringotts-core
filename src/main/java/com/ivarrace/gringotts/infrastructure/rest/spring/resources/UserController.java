@@ -4,6 +4,7 @@ import com.ivarrace.gringotts.application.service.UserService;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewUserCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.UserResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.UserMapper;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @Hidden
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody @Valid NewUserCommand request) {
         UserResponse response = UserMapper.INSTANCE.toResponse(userService.save(UserMapper.INSTANCE.toDomain(request)));
