@@ -34,4 +34,6 @@ jobs:
             - name: Build and analyze
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-              run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=gringotts-core -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+                SONAR_LOGIN: ${{ secrets.SONARQUBE_TOKEN }}
+                SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
+              run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=gringotts-core
