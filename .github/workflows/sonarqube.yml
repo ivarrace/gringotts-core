@@ -1,0 +1,23 @@
+on:
+  # Trigger analysis when pushing in master or pull requests, and when creating
+  # a pull request.
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+name: SonarQube Scan
+jobs:
+  sonarqube:
+    name: SonarQube Trigger
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking out
+        uses: actions/checkout@master
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - name: SonarQube Scan
+          run: |
+            mvn sonar:sonar -D'sonar.projectKey=gringotts-core' -D'sonar.host.url=${{ secrets.SONARQUBE_HOST }}' -D'sonar.login=${{ secrets.SONARQUBE_TOKEN }}'
