@@ -19,5 +19,4 @@ jobs:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
       - name: SonarQube Scan
-          run: |
-            mvn sonar:sonar -D'sonar.projectKey=gringotts-core' -D'sonar.host.url=${{ secrets.SONARQUBE_HOST }}' -D'sonar.login=${{ secrets.SONARQUBE_TOKEN }}'
+          run: mvn sonar:sonar -D'sonar.projectKey=gringotts-core' -D'sonar.host.url=${{ secrets.SONARQUBE_HOST }}' -D'sonar.login=${{ secrets.SONARQUBE_TOKEN }}'
