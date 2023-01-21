@@ -1,4 +1,4 @@
-name: SonarQube Scan
+name: Sonar scan
 on:
   # Trigger analysis when pushing in master or pull requests, and when creating
   # a pull request.
@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   sonarqube:
-    name: SonarQube Trigger
+    name: Sonar Trigger
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Cache SonarQube packages
+      - name: Cache Sonarqube packages
         uses: actions/cache@v1
         with:
           path: ~/.sonar/cache
@@ -31,9 +31,9 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+      - name: Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_LOGIN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
-        run: mvn -B verify sonar:sonar -Dsonar.projectKey=gringotts-core
+        run: mvn sonar:sonar -Dsonar.projectKey=gringotts-core
