@@ -105,17 +105,18 @@ class MovementServiceTest {
     @Test
     void create_alreadyExists() {
         Movement movement = FakerGenerator.fakerMovement();
+        String accountancyKey = movement.getCategory().getGroup().getAccountancy().getKey();
         when(categoryService.findOne(
-                movement.getCategory().getGroup().getAccountancy().getKey(),
+                accountancyKey,
                 movement.getCategory().getGroup().getType(),
                 movement.getCategory().getGroup().getKey(),
                 movement.getCategory().getKey())).thenThrow(new ObjectNotFoundException(movement.getCategory().getKey()));
         ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
-            movementService.create(movement.getCategory().getGroup().getAccountancy().getKey(), movement);
+            movementService.create(accountancyKey, movement);
         });
         assertTrue(thrown.getMessage().contains(movement.getCategory().getKey()));
         verify(categoryService, times(1)).findOne(
-                movement.getCategory().getGroup().getAccountancy().getKey(),
+                accountancyKey,
                 movement.getCategory().getGroup().getType(),
                 movement.getCategory().getGroup().getKey(),
                 movement.getCategory().getKey());
@@ -141,14 +142,15 @@ class MovementServiceTest {
     @Test
     void modify_notFound() {
         Movement existingMovement = FakerGenerator.fakerMovement();
+        String existingMovementId = existingMovement.getId();
         Movement updatedMovement = FakerGenerator.fakerMovement();
-        when(movementRepositoryPort.findById(existingMovement.getId())).thenThrow(new ObjectNotFoundException(existingMovement.getId()));
+        when(movementRepositoryPort.findById(existingMovementId)).thenThrow(new ObjectNotFoundException(existingMovementId));
         ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
-            movementService.modify(existingMovement.getId(), updatedMovement);
+            movementService.modify(existingMovementId, updatedMovement);
         });
 
-        assertTrue(thrown.getMessage().contains(existingMovement.getId()));
-        verify(movementRepositoryPort, times(1)).findById(existingMovement.getId());
+        assertTrue(thrown.getMessage().contains(existingMovementId));
+        verify(movementRepositoryPort, times(1)).findById(existingMovementId);
         verify(movementRepositoryPort, times(0)).save(any());
         verifyNoMoreInteractions(movementRepositoryPort);
     }
