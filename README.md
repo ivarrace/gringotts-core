@@ -4,9 +4,14 @@
 
 ## How to run it?
 
-```
-mvn spring-boot:run
-```
+- Maven
+    ```bash
+    mvn spring-boot:run
+    ```
+- Docker (with Postgres)
+    ```bash
+    docker compose up -d
+    ```
 
 ## Swagger
 
@@ -17,12 +22,8 @@ Swagger - http://localhost:8080/swagger-ui/index.html
 
 ## Docker
 
-1. Build image
-```bash
-docker build -t gringotts/gringotts-core:local .
-```
+- Build image
+    ```bash
+    docker build -t gringotts/gringotts-core:local .
+    ```
 
-2. Run in docker with db
-````bash
-docker compose up -d
-````

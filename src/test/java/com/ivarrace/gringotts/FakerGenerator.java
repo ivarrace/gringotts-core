@@ -1,9 +1,7 @@
 package com.ivarrace.gringotts;
 
 import com.github.javafaker.Faker;
-import com.ivarrace.gringotts.domain.accountancy.Accountancy;
-import com.ivarrace.gringotts.domain.accountancy.Group;
-import com.ivarrace.gringotts.domain.accountancy.GroupType;
+import com.ivarrace.gringotts.domain.accountancy.*;
 import com.ivarrace.gringotts.domain.user.UserAuthority;
 import com.ivarrace.gringotts.infrastructure.db.springdata.dbo.*;
 
@@ -49,7 +47,8 @@ public class FakerGenerator {
         entity.setId(UUID.randomUUID());
         entity.setName(faker.name().name());
         entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
-        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(42, 10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setLastModified(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setType(optionFromEnum(GroupType.class).name());
         entity.setAccountancy(fakerAccountancyEntity());
         entity.setCategories(Collections.emptyList());
@@ -61,7 +60,8 @@ public class FakerGenerator {
         entity.setId(UUID.randomUUID().toString());
         entity.setName(faker.name().name());
         entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
-        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(42, 10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setLastModified(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setType(optionFromEnum(GroupType.class));
         entity.setAccountancy(fakerAccountancy());
         entity.setCategories(Collections.emptyList());
@@ -73,9 +73,21 @@ public class FakerGenerator {
         entity.setId(UUID.randomUUID());
         entity.setName(faker.name().name());
         entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
-        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(42, 10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setLastModified(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
         entity.setGroup(fakerGroupEntity());
         entity.setMovements(Collections.emptyList());
+        return entity;
+    }
+
+    public static Category fakerCategory() {
+        Category entity = new Category();
+        entity.setId(UUID.randomUUID().toString());
+        entity.setName(faker.name().name());
+        entity.setKey(faker.regexify("[a-z]{10}[_][a-z]{10}"));
+        entity.setCreatedDate(LocalDateTime.ofInstant(faker.date().past(42, 10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setLastModified(LocalDateTime.ofInstant(faker.date().past(10, TimeUnit.DAYS).toInstant(), ZoneId.systemDefault()));
+        entity.setGroup(fakerGroup());
         return entity;
     }
 
@@ -86,6 +98,16 @@ public class FakerGenerator {
         entity.setAmount(new BigDecimal(faker.number().randomDouble(2,0, 1000)));
         entity.setInfo(faker.harryPotter().spell());
         entity.setCategory(fakerCategoryEntity());
+        return entity;
+    }
+
+    public static Movement fakerMovement() {
+        Movement entity = new Movement();
+        entity.setId(UUID.randomUUID().toString());
+        entity.setDate(LocalDate.ofInstant(faker.date().birthday().toInstant(), ZoneId.systemDefault()));
+        entity.setAmount(new BigDecimal(faker.number().randomDouble(2,0, 1000)));
+        entity.setInfo(faker.harryPotter().spell());
+        entity.setCategory(fakerCategory());
         return entity;
     }
 
