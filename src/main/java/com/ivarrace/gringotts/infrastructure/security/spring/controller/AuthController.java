@@ -1,6 +1,7 @@
 package com.ivarrace.gringotts.infrastructure.security.spring.controller;
 
 import com.ivarrace.gringotts.infrastructure.security.spring.services.AuthHandler;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Auth. management")
 public class AuthController {
 
     private final AuthHandler authHandler;

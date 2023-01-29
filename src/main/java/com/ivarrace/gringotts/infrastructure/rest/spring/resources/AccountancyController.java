@@ -4,6 +4,9 @@ import com.ivarrace.gringotts.application.service.AccountancyService;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewAccountancyCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.AccountancyResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.AccountancyMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,22 +21,27 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/accountancy")
 @Slf4j
+@Tag(name = "Accountancy management", description = "Manage accountancy properties and retrieve accountancy information")
+@SecurityRequirement(name = "bearerAuth")
 public class AccountancyController {
 
     private final AccountancyService accountancyServer;
 
+    @Operation(summary = "Get all user accountancies")
     @GetMapping("/")
     public ResponseEntity<List<AccountancyResponse>> getAll() {
         List<AccountancyResponse> response = AccountancyMapper.INSTANCE.toResponseList(accountancyServer.findAll());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "Add new accountancy")
     @PostMapping("")
     public ResponseEntity<AccountancyResponse> save(@Valid @RequestBody NewAccountancyCommand command) {
         AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.create(AccountancyMapper.INSTANCE.toDomain(command)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get accountancy by key")
     @GetMapping("/{accountancyKey}")
     public ResponseEntity<AccountancyResponse> getByKey(@PathVariable String accountancyKey) {
         AccountancyResponse response = AccountancyMapper.INSTANCE.toResponse(accountancyServer.findOne(accountancyKey));

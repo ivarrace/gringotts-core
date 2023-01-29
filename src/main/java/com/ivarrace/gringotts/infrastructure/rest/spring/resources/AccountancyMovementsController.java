@@ -6,6 +6,8 @@ import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewMovement
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.UpdateMovementCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.MovementResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.MovementMapper;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import java.util.Optional;
 @RestController()
 @RequiredArgsConstructor
 @RequestMapping("/api/accountancy/{accountancyKey}/movements")
+@Tag(name = "Movements", description = "Manage movements")
+@SecurityRequirement(name = "bearerAuth")
 public class AccountancyMovementsController {
 
     private final MovementService movementService;

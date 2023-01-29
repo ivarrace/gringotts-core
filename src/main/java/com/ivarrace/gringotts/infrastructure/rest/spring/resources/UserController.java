@@ -5,6 +5,7 @@ import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewUserComm
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.response.UserResponse;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

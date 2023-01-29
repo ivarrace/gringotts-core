@@ -9,6 +9,8 @@ import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewCategory
 import com.ivarrace.gringotts.infrastructure.rest.spring.dto.command.NewGroupCommand;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.CategoryMapper;
 import com.ivarrace.gringotts.infrastructure.rest.spring.mapper.GroupMapper;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import java.util.List;
 @RestController()
 @RequiredArgsConstructor
 @RequestMapping("/api/accountancy/{accountancyKey}/incomes")
+@Tag(name = "Accountancy management", description = "Manage accountancy properties and retrieve accountancy information")
+@SecurityRequirement(name = "bearerAuth")
 public class IncomesController {
 
     private final GroupService groupService;
