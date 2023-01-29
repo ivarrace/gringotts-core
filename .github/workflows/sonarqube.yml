@@ -32,4 +32,4 @@ jobs:
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        run: mvn sonar:sonar -D'sonar.projectKey=gringotts-core' -D'sonar.host.url=${{ SONARQUBE_HOST }}' -D'sonar.login=${{ SONARQUBE_TOKEN }}'
+        run: mvn sonar:sonar -D'sonar.projectKey=gringotts-core' -D'sonar.host.url=${{ secrets.SONARQUBE_HOST }}' -D'sonar.login=${{ secrets.SONARQUBE_TOKEN }}'
