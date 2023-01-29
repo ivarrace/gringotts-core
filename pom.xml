@@ -6,7 +6,7 @@
 
     <groupId>com.ivarrace</groupId>
     <artifactId>gringotts-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>gringotts-core</name>
     <description>Demo project for Spring Boot</description>
     <parent>
