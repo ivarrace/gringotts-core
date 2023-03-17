@@ -4,7 +4,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:54321/gringotts
+    url: jdbc:postgresql://localhost:5432/gringotts
     username: gringotts
     password: gringotts
     driver-class-name: org.postgresql.Driver
